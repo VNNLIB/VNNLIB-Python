@@ -1,5 +1,11 @@
 [build-system]
-requires = ["pybind11>=2.6.0", "setuptools>=45", "wheel"]
+requires = [
+    "scikit-build",
+    "setuptools>=65",
+    "wheel",
+    "pybind11>=2.6.0",
+    "cmake>=3.16"
+]
 build-backend = "setuptools.build_meta"
 
 [project]
@@ -15,9 +21,10 @@ dependencies = [
     "pybind11>=2.6.0",
 ]
 
-[tool.setuptools.packages.find]
-where = ["."]
-include = ["vnnlib*"]
+[tool.setuptools]
+packages = ["vnnlib"]
+zip-safe = false
+include-package-data = true
 
 [tool.setuptools.package-data]
-vnnlib = ["*.so", "py.typed", "*.pyi"]
+vnnlib = ["py.typed", "*.pyi"]
