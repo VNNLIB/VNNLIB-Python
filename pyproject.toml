@@ -1,12 +1,12 @@
 [build-system]
 requires = [
-    "scikit-build",
+    "scikit-build-core",
     "setuptools>=65",
     "wheel",
     "pybind11>=2.6.0",
     "cmake>=3.16"
 ]
-build-backend = "setuptools.build_meta"
+build-backend = "scikit_build_core.build"
 
 [project]
 name = "vnnlib"
