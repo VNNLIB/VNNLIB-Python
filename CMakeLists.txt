@@ -28,6 +28,12 @@ set_target_properties(_core PROPERTIES
     INSTALL_RPATH "$ORIGIN"
 )
 
+if(APPLE)
+    set_target_properties(_core PROPERTIES
+        INSTALL_RPATH "@loader_path"
+    )
+endif()
+
 install(TARGETS _core VNNLib
     LIBRARY DESTINATION vnnlib   # .so
     ARCHIVE DESTINATION vnnlib   # .a
