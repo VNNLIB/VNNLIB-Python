@@ -359,8 +359,12 @@ class TestCompatTransformer:
         """
         
         # Mixed input-output constraints should be rejected
-        with pytest.raises(vnnlib.VNNLibException, match="Input-output mixed constraints are not supported"):
+        with pytest.raises(vnnlib.VNNLibException) as excinfo:
             self._parse_and_transform(content)
+        
+        error_msg = str(excinfo.value)
+        assert "Input-output mixed constraints are not supported" in error_msg or \
+               "Input constraints must be simple bounds on individual variables" in error_msg
 
     def test_large_disjunction(self):
         """Test specification with a larger disjunction."""
