@@ -22,20 +22,20 @@ PYBIND11_MODULE(_core, m) {
 	py::register_exception<VNNLibException>(m, "VNNLibException");
 
 	// Helper Types
-	py::enum_<DType>(m, "DType")
-		.value("Real", DType::Real)
-		.value("F16", DType::F16).value("F32", DType::F32).value("F64", DType::F64).value("BF16", DType::BF16)
-		.value("F8E4M3FN", DType::F8E4M3FN).value("F8E5M2", DType::F8E5M2)
-		.value("F8E4M3FNUZ", DType::F8E4M3FNUZ).value("F8E5M2FNUZ", DType::F8E5M2FNUZ)
-		.value("F4E2M1", DType::F4E2M1)
-		.value("I8", DType::I8).value("I16", DType::I16).value("I32", DType::I32).value("I64", DType::I64)
-		.value("U8", DType::U8).value("U16", DType::U16).value("U32", DType::U32).value("U64", DType::U64)
-		.value("C64", DType::C64).value("C128", DType::C128)
-		.value("Bool", DType::Bool).value("String", DType::String)
-		.value("Unknown", DType::Unknown)
-		.value("NegativeIntConstant", DType::NegativeIntConstant)
-		.value("PositiveIntConstant", DType::PositiveIntConstant)
-		.value("FloatConstant", DType::FloatConstant);
+	py::enum_<TDataType>(m, "DType")
+		.value("Real", TDataType::Real)
+		.value("F16", TDataType::F16).value("F32", TDataType::F32).value("F64", TDataType::F64).value("BF16", TDataType::BF16)
+		.value("F8E4M3FN", TDataType::F8E4M3FN).value("F8E5M2", TDataType::F8E5M2)
+		.value("F8E4M3FNUZ", TDataType::F8E4M3FNUZ).value("F8E5M2FNUZ", TDataType::F8E5M2FNUZ)
+		.value("F4E2M1", TDataType::F4E2M1)
+		.value("I8", TDataType::I8).value("I16", TDataType::I16).value("I32", TDataType::I32).value("I64", TDataType::I64)
+		.value("U8", TDataType::U8).value("U16", TDataType::U16).value("U32", TDataType::U32).value("U64", TDataType::U64)
+		.value("C64", TDataType::C64).value("C128", TDataType::C128)
+		.value("Bool", TDataType::Bool).value("String", TDataType::String)
+		.value("Unknown", TDataType::Unknown)
+		.value("NegativeIntConstant", TDataType::NegativeIntConstant)
+		.value("PositiveIntConstant", TDataType::PositiveIntConstant)
+		.value("FloatConstant", TDataType::FloatConstant);
 
 	py::enum_<SymbolKind>(m, "SymbolKind")
 		.value("Input", SymbolKind::Input)
@@ -176,7 +176,7 @@ PYBIND11_MODULE(_core, m) {
 			if (d.symbol->onnxName.empty()) return py::none();
 			return py::str(d.symbol->onnxName);
 		})
-		.def_property_readonly("dtype", [](const TInputDefinition& d){ return d.symbol ? d.symbol->dtype : DType::Unknown; })
+		.def_property_readonly("dtype", [](const TInputDefinition& d){ return d.symbol ? d.symbol->dtype : TDataType::Unknown; })
 		.def_property_readonly("shape", [](const TInputDefinition& d){ return d.symbol ? d.symbol->shape : Shape{}; })
 		.def_property_readonly("kind",  [](const TInputDefinition& d){ return d.symbol ? d.symbol->kind : SymbolKind::Unknown; })
 		.def_property_readonly("network_name", [](const TInputDefinition& d){ return d.symbol ? d.symbol->networkName : std::string{}; });
@@ -187,7 +187,7 @@ PYBIND11_MODULE(_core, m) {
 			if (d.symbol->onnxName.empty()) return py::none();
 			return py::str(d.symbol->onnxName);
 		})
-		.def_property_readonly("dtype", [](const THiddenDefinition& d){ return d.symbol ? d.symbol->dtype : DType::Unknown; })
+		.def_property_readonly("dtype", [](const THiddenDefinition& d){ return d.symbol ? d.symbol->dtype : TDataType::Unknown; })
 		.def_property_readonly("shape", [](const THiddenDefinition& d){ return d.symbol ? d.symbol->shape : Shape{}; })
 		.def_property_readonly("kind",  [](const THiddenDefinition& d){ return d.symbol ? d.symbol->kind : SymbolKind::Unknown; })
 		.def_property_readonly("network_name", [](const THiddenDefinition& d){ return d.symbol ? d.symbol->networkName : std::string{}; });
@@ -198,7 +198,7 @@ PYBIND11_MODULE(_core, m) {
 			if (d.symbol->onnxName.empty()) return py::none();
 			return py::str(d.symbol->onnxName);
 		})
-		.def_property_readonly("dtype", [](const TOutputDefinition& d){ return d.symbol ? d.symbol->dtype : DType::Unknown; })
+		.def_property_readonly("dtype", [](const TOutputDefinition& d){ return d.symbol ? d.symbol->dtype : TDataType::Unknown; })
 		.def_property_readonly("shape", [](const TOutputDefinition& d){ return d.symbol ? d.symbol->shape : Shape{}; })
 		.def_property_readonly("kind",  [](const TOutputDefinition& d){ return d.symbol ? d.symbol->kind : SymbolKind::Unknown; })
 		.def_property_readonly("network_name", [](const TOutputDefinition& d){ return d.symbol ? d.symbol->networkName : std::string{}; });

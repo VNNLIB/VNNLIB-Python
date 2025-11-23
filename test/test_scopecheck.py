@@ -88,7 +88,7 @@ class TestScopeChecker:
         )
         (assert (or 
             (<= X[10, 10] -3.0) ; out of bounds access
-            (>= Y[0] 0.0)
+            (>= Y 0.0)
         ))
         """
         with pytest.raises(vnnlib.VNNLibException) as exc_info:
@@ -116,7 +116,7 @@ class TestScopeChecker:
         )
         (assert (or 
             (<= X[4, 4] -3.0) ; out of bounds access
-            (>= Y[0] 0.0)
+            (>= Y 0.0)
         ))
         """
         with pytest.raises(vnnlib.VNNLibException) as exc_info:
@@ -140,7 +140,7 @@ class TestScopeChecker:
         )
         (assert (or 
             (<= X[1, 2, 3] -3.0) ; too many indices
-            (>= Y[0] 0.0)
+            (>= Y 0.0)
         ))
         """
         with pytest.raises(vnnlib.VNNLibException) as exc_info:
@@ -161,7 +161,7 @@ class TestScopeChecker:
         )
         (assert (or 
             (<= X[1] -3.0) ; not enough indices
-            (>= Y[0] 0.0)
+            (>= Y 0.0)
         ))
         """
         with pytest.raises(vnnlib.VNNLibException) as exc_info:
@@ -170,93 +170,26 @@ class TestScopeChecker:
         json_error = self._assert_error_count(exc_info, 1)
         self._assert_error_contains(json_error, "NotEnoughIndices", "X[1]")
 
-    # ONNX Name Consistency Tests -----------------------------------------------------------------------------------------------------------------------------
-
-    def test_inconsistent_onnx_names(self):
+    def test_scalar_indexing(self):
         """
-        Tests that when named input/output variables are mixed with unnamed ones, 
-        a VNNLibError is raised.
+        Tests that indexing a scalar variable raises a VNNLibError.
         """
-        
-        def check(content, expected_count=1):
-            with pytest.raises(vnnlib.VNNLibException) as exc_info:
-                vnnlib.parse_vnnlib_str(content)
-            json_error = json.loads(str(exc_info.value))
-            assert len(json_error["errors"]) == expected_count
-            # All errors should be UnexpectedOnnxName
-            for error in json_error["errors"]:
-                assert "UnexpectedOnnxName" in error["errorCode"]
-        
-        # Test with mixed ONNX names across inputs (first input is named)
-        check("""
+        invalid_content = """
         (vnnlib-version <2.0>)
         (declare-network acc
-            (declare-input X Real [] "x_in")          
-            (declare-input Z Real [])                 
-            (declare-output Y Real [] "y_out")          
+            (declare-input X Real [])   ; X is a scalar
+            (declare-output Y Real [])
         )
-        (assert (>= Y[0] 0.0))
-        """, expected_count=1)
-
-        # Test with mixed ONNX names across inputs (first input is not named) 
-        check("""
-        (vnnlib-version <2.0>)
-        (declare-network acc
-            (declare-input X Real [])                  
-            (declare-input Z Real [] "z_in")           
-            (declare-output Y Real [] "y_out")         
-        )
-        (assert (>= Y[0] 0.0))
-        """, expected_count=2)  # Reports both Z and Y as inconsistent
-
-        # Test with mixed ONNX names across inputs and outputs
-        check("""
-        (vnnlib-version <2.0>)
-        (declare-network acc
-            (declare-input X Real [] "x_in")           
-            (declare-input Z Real [] "z_in")           
-            (declare-output Y Real [])                 
-        )
-        (assert (>= Y[0] 0.0))
-        """, expected_count=1)  # Only Y is inconsistent
-
-        # Test with multiple named variables, when first input is unnamed (multiple mismatches)
-        # The new checker reports all mismatches
-        check("""
-        (vnnlib-version <2.0>)
-        (declare-network acc
-            (declare-input X Real [])           
-            (declare-input Z Real [] "z_in")       
-            (declare-output Y Real [] "y_out")                
-        )
-        (assert (>= Y[0] 0.0))
-        """, expected_count=2)  # Reports both Z and Y as inconsistent
-
-    def test_consistent_onnx_names_all_named(self):
-        """Test that all ONNX names is a valid configuration."""
-        content = """
-        (vnnlib-version <2.0>)
-        (declare-network acc
-            (declare-input X Real [] "x_in")          
-            (declare-input Z Real [] "z_in")          
-            (declare-output Y Real [] "y_out")          
-        )
-        (assert (>= Y[0] 0.0))
+        (assert (or 
+            (<= X[0] -3.0) ; scalar indexing
+            (>= Y 0.0)
+        ))
         """
-        vnnlib.parse_vnnlib_str(content)  # This should not raise an error
+        with pytest.raises(vnnlib.VNNLibException) as exc_info:
+            vnnlib.parse_vnnlib_str(invalid_content)
 
-    def test_consistent_onnx_names_none_named(self):
-        """Test that no ONNX names is a valid configuration."""
-        content = """
-        (vnnlib-version <2.0>)
-        (declare-network acc
-            (declare-input X Real [])           
-            (declare-input Z Real [])          
-            (declare-output Y Real [])          
-        )
-        (assert (>= Y[0] 0.0))
-        """
-        vnnlib.parse_vnnlib_str(content)  # This should not raise an error
+        json_error = self._assert_error_count(exc_info, 1)
+        self._assert_error_contains(json_error, "InvalidScalarAccess", "X[0]")
 
 
 if __name__ == "__main__":

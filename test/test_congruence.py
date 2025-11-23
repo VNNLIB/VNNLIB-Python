@@ -69,23 +69,6 @@ class TestNetworkCongruenceCheck:
         """
         vnnlib.parse_vnnlib_str(content)  # Should not raise an error
 
-    def test_valid_onnx_congruence(self):
-        """Test valid congruence with matching ONNX names."""
-        content = """
-        (vnnlib-version <2.0>)
-        (declare-network net1
-            (declare-input X1 Real [2] "input_tensor")
-            (declare-output Y1 Real [1] "output_tensor")
-        )
-        (declare-network net2
-            (equal-to net1)
-            (declare-input X2 Real [2] "input_tensor")
-            (declare-output Y2 Real [1] "output_tensor")
-        )
-        (assert (>= X1[0] 0.0))
-        """
-        vnnlib.parse_vnnlib_str(content)  # Should not raise an error
-
     # Test Congruence Mismatches ------------------------------------------------------------------
 
     def test_shape_mismatch(self):
@@ -133,28 +116,6 @@ class TestNetworkCongruenceCheck:
         self._assert_error_count(json_error, 1)
         self._assert_error_contains(json_error, "Number of variables mismatch", "net1")
 
-    def test_onnx_name_mismatches(self):
-        """Test that mismatched ONNX names are detected."""
-        invalid_content = """
-        (vnnlib-version <2.0>)
-        (declare-network net1
-            (declare-input X1 Real [2] "input_tensor")
-            (declare-output Y1 Real [1] "output_tensor")
-        )
-        (declare-network net2
-            (equal-to net1)
-            (declare-input X2 Real [2] "different_input")
-            (declare-output Y2 Real [1] "output_tensor")
-        )
-        (assert (>= X1[0] 0.0))
-        """
-        with pytest.raises(vnnlib.VNNLibException) as exc_info:
-            vnnlib.parse_vnnlib_str(invalid_content)
-
-        json_error = json.loads(str(exc_info.value))
-        self._assert_error_count(json_error, 1)
-        self._assert_error_contains(json_error, "ONNX name 'different_input' not found", "net1")
-
     def test_type_mismatches(self):
         """Test that type mismatch in input variables is detected."""
         invalid_content = """
@@ -176,30 +137,6 @@ class TestNetworkCongruenceCheck:
         json_error = json.loads(str(exc_info.value))
         self._assert_error_count(json_error, 1)
         self._assert_error_contains(json_error, "Type mismatch", "net1")
-
-    # ONNX Naming Convention Mismatch ------------------------------------------------------------
-
-    def test_onnx_naming_convention_mismatch(self):
-        """Test that ONNX naming convention mismatches are detected."""
-        invalid_content = """
-        (vnnlib-version <2.0>)
-        (declare-network net1
-            (declare-input X1 Real [2] "input_tensor")
-            (declare-output Y1 Real [1] "output_tensor")
-        )
-        (declare-network net2
-            (equal-to net1)
-            (declare-input X2 Real [2])  ; Using ordered variables instead of named variables
-            (declare-output Y2 Real [1])
-        )
-        (assert (>= X1[0] 0.0))
-        """
-        with pytest.raises(vnnlib.VNNLibException) as exc_info:
-            vnnlib.parse_vnnlib_str(invalid_content)
-
-        json_error = json.loads(str(exc_info.value))
-        self._assert_error_count(json_error, 1)
-        self._assert_error_contains(json_error, "Variable naming convention mismatch", "net1")
 
     # Network Reference Errors -----------------------------------------------------------------
 
@@ -247,7 +184,7 @@ class TestNetworkCongruenceCheck:
     # Multiple Network Chain Test ----------------------------------------------------------
 
     def test_transitive_relationship(self):
-        """Test a chain of networks with equalTo relationships."""
+        """Test a chain of networks with equalTo relationships causes an error."""
         content = """
         (vnnlib-version <2.0>)
         (declare-network net1
@@ -267,7 +204,12 @@ class TestNetworkCongruenceCheck:
         
         (assert (>= X1[0] 0.0))
         """
-        vnnlib.parse_vnnlib_str(content)  # Should not raise an error
+        with pytest.raises(vnnlib.VNNLibException) as exc_info:
+            vnnlib.parse_vnnlib_str(content)
+
+        json_error = json.loads(str(exc_info.value))
+        self._assert_error_count(json_error, 1)
+        self._assert_error_contains(json_error, "Chained network equivalence is not allowed", "net2")
 
 
 if __name__ == "__main__":
