@@ -31,7 +31,7 @@ from ._core import (
     # Expression types
     ArithExpr, BoolExpr, 
     Var, Literal, Float, Int, Negate, Plus, Minus, Multiply,
-    Compare, GreaterThan, GreaterEqual, LessThan, LessEqual, Equal, NotEqual,
+    Comparison, GreaterThan, GreaterEqual, LessThan, LessEqual, Equal, NotEqual,
     Connective, And, Or,
     
     # Linear arithmetic
@@ -62,7 +62,7 @@ __all__ = [
     # Expression types  
     "ArithExpr", "BoolExpr",
     "Var", "Literal", "Float", "Int", "Negate", "Plus", "Minus", "Multiply",
-    "Compare", "GreaterThan", "GreaterEqual", "LessThan", "LessEqual", "Equal", "NotEqual",
+    "Comparison", "GreaterThan", "GreaterEqual", "LessThan", "LessEqual", "Equal", "NotEqual",
     "Connective", "And", "Or",
     
     # Linear arithmetic
