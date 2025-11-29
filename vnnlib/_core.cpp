@@ -70,7 +70,7 @@ PYBIND11_MODULE(_core, m) {
 	// --- Arithmetic Operations --- 
 	py::class_<TArithExpr, TNode>(m, "ArithExpr")
 		.def_property_readonly("dtype", [](const TArithExpr& e){ return e.dtype; })
-		.def("linearize", [](const TArithExpr& e){
+		.def("to_linear_expr", [](const TArithExpr& e){
 			auto lin_expr = linearize(&e);
 			return py::cast(lin_expr.release(), py::return_value_policy::take_ownership);
 		});
@@ -128,7 +128,7 @@ PYBIND11_MODULE(_core, m) {
 
   	// ---------- Boolean Operations ----------
 	py::class_<TBoolExpr, TNode>(m, "BoolExpr")
-		.def("dnf_form", [](const TBoolExpr& e){
+		.def("to_dnf", [](const TBoolExpr& e){
 			DNF dnf = toDNF(&e);
 			py::list py_dnf;
 

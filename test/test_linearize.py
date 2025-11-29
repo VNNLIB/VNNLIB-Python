@@ -1,7 +1,7 @@
 """
 Unit tests for LinearArithExpr linearization functionality.
 
-This module tests the linearize method on various arithmetic expressions,
+This module tests the to_linear_expr method on various arithmetic expressions,
 covering basic operations, complex expressions, edge cases, and error conditions.
 """
 
@@ -49,7 +49,7 @@ class TestLinearization:
         (assert (<= X[0] 10.0))
         """
         lhs = self._parse_and_get_lhs(content)
-        linear = lhs.linearize()
+        linear = lhs.to_linear_expr()
         self._assert_linear_expr(linear, 0.0, [(1.0, "X[0]")])
 
     def test_single_constant(self):
@@ -63,7 +63,7 @@ class TestLinearization:
         (assert (<= 5.0 10.0))
         """
         lhs = self._parse_and_get_lhs(content)
-        linear = lhs.linearize()
+        linear = lhs.to_linear_expr()
         self._assert_linear_expr(linear, 5.0, [])
 
     def test_flat_addition(self):
@@ -77,7 +77,7 @@ class TestLinearization:
         (assert (<= (+ X[0] 5.0) 10.0))
         """
         lhs = self._parse_and_get_lhs(content)
-        linear = lhs.linearize()
+        linear = lhs.to_linear_expr()
         self._assert_linear_expr(linear, 5.0, [(1.0, "X[0]")])
 
     def test_variable_constant_subtraction(self):
@@ -91,7 +91,7 @@ class TestLinearization:
         (assert (<= (- X[0] 5.0) 0.0))
         """
         lhs = self._parse_and_get_lhs(content)
-        linear = lhs.linearize()
+        linear = lhs.to_linear_expr()
         self._assert_linear_expr(linear, -5.0, [(1.0, "X[0]")])
 
     def test_constant_variable_subtraction(self):
@@ -105,7 +105,7 @@ class TestLinearization:
         (assert (<= (- 5.0 X[0]) 0.0))
         """
         lhs = self._parse_and_get_lhs(content)
-        linear = lhs.linearize()
+        linear = lhs.to_linear_expr()
         self._assert_linear_expr(linear, 5.0, [(-1.0, "X[0]")])
 
     def test_variable_constant_multiplication(self):
@@ -119,7 +119,7 @@ class TestLinearization:
         (assert (<= (* X[0] 3.5) 7.0))
         """
         lhs = self._parse_and_get_lhs(content)
-        linear = lhs.linearize()
+        linear = lhs.to_linear_expr()
         self._assert_linear_expr(linear, 0.0, [(3.5, "X[0]")])
 
     def test_constant_variable_multiplication(self):
@@ -133,7 +133,7 @@ class TestLinearization:
         (assert (<= (* -2.0 X[0]) 0.0))
         """
         lhs = self._parse_and_get_lhs(content)
-        linear = lhs.linearize()
+        linear = lhs.to_linear_expr()
         self._assert_linear_expr(linear, 0.0, [(-2.0, "X[0]")])
 
     def test_flat_negation(self):
@@ -147,7 +147,7 @@ class TestLinearization:
         (assert (<= (- X[0]) 0.0))
         """
         lhs = self._parse_and_get_lhs(content)
-        linear = lhs.linearize()
+        linear = lhs.to_linear_expr()
         self._assert_linear_expr(linear, 0.0, [(-1.0, "X[0]")])
 
     def test_negative_coefficients(self):
@@ -161,7 +161,7 @@ class TestLinearization:
         (assert (<= (* -5.0 X[0]) 0.0))
         """
         lhs = self._parse_and_get_lhs(content)
-        linear = lhs.linearize()
+        linear = lhs.to_linear_expr()
         self._assert_linear_expr(linear, 0.0, [(-5.0, "X[0]")])
 
     # Multiple Variable Tests (Same and Different) --------------------------------------------------------------------------------------------------------------
@@ -177,7 +177,7 @@ class TestLinearization:
         (assert (<= (+ X[0] 5.0 X[0]) 10.0))
         """
         lhs = self._parse_and_get_lhs(content)
-        linear = lhs.linearize()
+        linear = lhs.to_linear_expr()
         self._assert_linear_expr(linear, 5.0, [(2.0, "X[0]")])
 
     def test_variable_cancellation(self):
@@ -191,7 +191,7 @@ class TestLinearization:
         (assert (<= (- X[0] X[0]) 0.0))
         """
         lhs = self._parse_and_get_lhs(content)
-        linear = lhs.linearize()
+        linear = lhs.to_linear_expr()
         self._assert_linear_expr(linear, 0.0, [])
 
     def test_two_different_variables(self):
@@ -205,7 +205,7 @@ class TestLinearization:
         (assert (<= (+ (- X[0] X[1]) 3.0) 0.0))
         """
         lhs = self._parse_and_get_lhs(content)
-        linear = lhs.linearize()
+        linear = lhs.to_linear_expr()
         self._assert_linear_expr(linear, 3.0, [(1.0, "X[0]"), (-1.0, "X[1]")])
 
     def test_three_different_variables(self):
@@ -219,7 +219,7 @@ class TestLinearization:
         (assert (<= (- X[0] X[1] X[2]) 0.0))
         """
         lhs = self._parse_and_get_lhs(content)
-        linear = lhs.linearize()
+        linear = lhs.to_linear_expr()
         self._assert_linear_expr(linear, 0.0, [(1.0, "X[0]"), (-1.0, "X[1]"), (-1.0, "X[2]")])
 
     # Complex Expression Tests ----------------------------------------------------------------------------------------------------------------------------------
@@ -235,7 +235,7 @@ class TestLinearization:
         (assert (<= (+ 5.0 (* -1.0 X[0]) (- X[1])) 0.0))
         """
         lhs = self._parse_and_get_lhs(content)
-        linear = lhs.linearize()
+        linear = lhs.to_linear_expr()
         self._assert_linear_expr(linear, 5.0, [(-1.0, "X[0]"), (-1.0, "X[1]")])
 
     def test_nested_multiplication(self):
@@ -249,7 +249,7 @@ class TestLinearization:
         (assert (<= (+ (* 2.0 (* X[0] 3.0)) 2.0) 20.0))
         """
         lhs = self._parse_and_get_lhs(content)
-        linear = lhs.linearize()
+        linear = lhs.to_linear_expr()
         self._assert_linear_expr(linear, 2.0, [(6.0, "X[0]")])
 
     # Zero Coefficient and Identity Tests --------------------------------------------------------------------------------------------------------------------
@@ -265,7 +265,7 @@ class TestLinearization:
         (assert (<= (* X[0] 0.0) 0.0))
         """
         lhs = self._parse_and_get_lhs(content)
-        linear = lhs.linearize()
+        linear = lhs.to_linear_expr()
         self._assert_linear_expr(linear, 0.0, [])
 
     def test_multiplication_by_one(self):
@@ -279,7 +279,7 @@ class TestLinearization:
         (assert (<= (* X[0] 1.0) 5.0))
         """
         lhs = self._parse_and_get_lhs(content)
-        linear = lhs.linearize()
+        linear = lhs.to_linear_expr()
         self._assert_linear_expr(linear, 0.0, [(1.0, "X[0]")])
 
     def test_addition_with_zero(self):
@@ -293,7 +293,7 @@ class TestLinearization:
         (assert (<= (+ X[0] 0.0) 5.0))
         """
         lhs = self._parse_and_get_lhs(content)
-        linear = lhs.linearize()
+        linear = lhs.to_linear_expr()
         self._assert_linear_expr(linear, 0.0, [(1.0, "X[0]")])
 
     # Pure Constants Tests ----------------------------------------------------------------------------------------------------------------------------------------
@@ -309,7 +309,7 @@ class TestLinearization:
         (assert (<= (* 2.0 3.0 2.5) 20.0))
         """
         lhs = self._parse_and_get_lhs(content)
-        linear = lhs.linearize()
+        linear = lhs.to_linear_expr()
         self._assert_linear_expr(linear, 15.0, [])
 
     def test_constant_addition(self):
@@ -323,7 +323,7 @@ class TestLinearization:
         (assert (<= (+ 1.0 2.0 5.0) 10.0))
         """
         lhs = self._parse_and_get_lhs(content)
-        linear = lhs.linearize()
+        linear = lhs.to_linear_expr()
         self._assert_linear_expr(linear, 8.0, [])
 
     # Edge Case Tests --------------------------------------------------------------------------------------------------------------------------------------------
@@ -339,7 +339,7 @@ class TestLinearization:
         (assert (<= (* 0.0001 X[0]) 0.1))
         """
         lhs = self._parse_and_get_lhs(content)
-        linear = lhs.linearize()
+        linear = lhs.to_linear_expr()
         self._assert_linear_expr(linear, 0.0, [(0.0001, "X[0]")])
 
     def test_large_coefficients(self):
@@ -353,7 +353,7 @@ class TestLinearization:
         (assert (<= (* 1000000.0 X[0]) 1000.0))
         """
         lhs = self._parse_and_get_lhs(content)
-        linear = lhs.linearize()
+        linear = lhs.to_linear_expr()
         self._assert_linear_expr(linear, 0.0, [(1000000.0, "X[0]")])
 
     # Non-linear Error Tests ---------------------------------------------------------------------------------------------------------------------------------------
@@ -370,7 +370,7 @@ class TestLinearization:
         """
         lhs = self._parse_and_get_lhs(content)
         with pytest.raises(Exception) as exc_info:
-            lhs.linearize()
+            lhs.to_linear_expr()
         
         assert "non-linear" in str(exc_info.value).lower()
 
