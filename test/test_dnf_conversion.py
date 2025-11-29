@@ -178,7 +178,7 @@ class TestDNFConversion:
         bool_expr = self._parse_and_get_bool_expr(content)
         dnf = bool_expr.dnf_form()
         
-        # Check that literals are proper Compare objects with valid LHS/RHS
+        # Check that literals are proper Comparison objects with valid LHS/RHS
         for clause in dnf:
             for literal in clause:
                 assert hasattr(literal, 'lhs'), "Literal should have LHS"

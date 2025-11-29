@@ -143,7 +143,7 @@ PYBIND11_MODULE(_core, m) {
 			return py_dnf;
 		});
 
-	py::class_<TCompare, TBoolExpr>(m, "Compare")
+	py::class_<TCompare, TBoolExpr>(m, "Comparison")
 		.def_property_readonly("lhs", [](const TCompare& n){ return n.lhs.get(); }, py::return_value_policy::reference_internal)
 		.def_property_readonly("rhs", [](const TCompare& n){ return n.rhs.get(); }, py::return_value_policy::reference_internal);
 
@@ -162,8 +162,8 @@ PYBIND11_MODULE(_core, m) {
 			return args_tuple;
 		});
 
-	py::class_<TAnd, TBoolExpr>(m, "And");
-	py::class_<TOr, TBoolExpr>(m, "Or");
+	py::class_<TAnd, Connective>(m, "And");
+	py::class_<TOr, Connective>(m, "Or");
 
 	// --- Assertion ---
 	py::class_<TAssertion, TNode>(m, "Assertion")
