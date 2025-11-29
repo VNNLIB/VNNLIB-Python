@@ -162,8 +162,8 @@ PYBIND11_MODULE(_core, m) {
 			return args_tuple;
 		});
 
-	py::class_<TAnd, Connective>(m, "And");
-	py::class_<TOr, Connective>(m, "Or");
+	py::class_<TAnd, TConnective>(m, "And");
+	py::class_<TOr, TConnective>(m, "Or");
 
 	// --- Assertion ---
 	py::class_<TAssertion, TNode>(m, "Assertion")

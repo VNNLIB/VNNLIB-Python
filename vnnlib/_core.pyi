@@ -139,7 +139,7 @@ class LinearArithExpr:
 # --- Boolean -----------------------------------------------------------------
 
 class BoolExpr(Node):
-    def dnf_form(self) -> List[List[BoolExpr]]: ...
+    def dnf_form(self) -> List[List[Comparison]]: ...
 
 class Comparison(BoolExpr):
     @property
