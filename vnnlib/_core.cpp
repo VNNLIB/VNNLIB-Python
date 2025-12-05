@@ -259,13 +259,13 @@ PYBIND11_MODULE(_core, m) {
 
 	// --- API ---
 	m.def("parse_query_file", [](const std::string& path) {
-		return parse_query_file(path);
+		return parseQueryFile(path);
 	},
 	py::return_value_policy::move,
 	py::arg("path"));
 	
 	m.def("parse_query_string", [](const std::string& content) {
-		return parse_query_string(content);
+		return parseQueryString(content);
 	},
 	py::return_value_policy::move,
 	py::arg("content"));
