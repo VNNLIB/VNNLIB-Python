@@ -50,7 +50,7 @@ class TestNetworkCongruenceCheck:
         )
         (assert (>= X1[0] 0.0))
         """
-        vnnlib.parse_vnnlib_str(content)  # Should not raise an error
+        vnnlib.parse_query_string(content)  # Should not raise an error
 
     def test_valid_isomorphic_to_basic(self):
         """Test valid isomorphicTo statement with matching variable shapes."""
@@ -67,7 +67,7 @@ class TestNetworkCongruenceCheck:
         )
         (assert (>= X1[0] 0.0))
         """
-        vnnlib.parse_vnnlib_str(content)  # Should not raise an error
+        vnnlib.parse_query_string(content)  # Should not raise an error
 
     # Test Congruence Mismatches ------------------------------------------------------------------
 
@@ -87,7 +87,7 @@ class TestNetworkCongruenceCheck:
         (assert (>= X1[0, 0] 0.0))
         """
         with pytest.raises(vnnlib.VNNLibException) as exc_info:
-            vnnlib.parse_vnnlib_str(invalid_content)
+            vnnlib.parse_query_string(invalid_content)
 
         json_error = json.loads(str(exc_info.value))
         self._assert_error_count(json_error, 1)
@@ -110,7 +110,7 @@ class TestNetworkCongruenceCheck:
         (assert (>= X1[0] 0.0))
         """
         with pytest.raises(vnnlib.VNNLibException) as exc_info:
-            vnnlib.parse_vnnlib_str(invalid_content)
+            vnnlib.parse_query_string(invalid_content)
 
         json_error = json.loads(str(exc_info.value))
         self._assert_error_count(json_error, 1)
@@ -132,7 +132,7 @@ class TestNetworkCongruenceCheck:
         (assert (>= X1[0] 0.0))
         """
         with pytest.raises(vnnlib.VNNLibException) as exc_info:
-            vnnlib.parse_vnnlib_str(invalid_content)
+            vnnlib.parse_query_string(invalid_content)
 
         json_error = json.loads(str(exc_info.value))
         self._assert_error_count(json_error, 1)
@@ -152,7 +152,7 @@ class TestNetworkCongruenceCheck:
         (assert (>= X1[0] 0.0))
         """
         with pytest.raises(vnnlib.VNNLibException) as exc_info:
-            vnnlib.parse_vnnlib_str(invalid_content)
+            vnnlib.parse_query_string(invalid_content)
 
         json_error = json.loads(str(exc_info.value))
         self._assert_error_count(json_error, 1)
@@ -175,7 +175,7 @@ class TestNetworkCongruenceCheck:
         """
         # Forward references are not supported, so this should fail
         with pytest.raises(vnnlib.VNNLibException) as exc_info:
-            vnnlib.parse_vnnlib_str(content)
+            vnnlib.parse_query_string(content)
 
         json_error = json.loads(str(exc_info.value))
         self._assert_error_count(json_error, 1)
@@ -205,7 +205,7 @@ class TestNetworkCongruenceCheck:
         (assert (>= X1[0] 0.0))
         """
         with pytest.raises(vnnlib.VNNLibException) as exc_info:
-            vnnlib.parse_vnnlib_str(content)
+            vnnlib.parse_query_string(content)
 
         json_error = json.loads(str(exc_info.value))
         self._assert_error_count(json_error, 1)

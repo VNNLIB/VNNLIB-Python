@@ -25,7 +25,7 @@ pip install vnnlib
 import vnnlib
 
 # Parse a VNN-LIB specification
-query = vnnlib.parse_vnnlib("path/to/spec.vnnlib")
+query = vnnlib.parse_query_file("path/to/spec.vnnlib")
 
 for assertion in query.assertions:
     print(assertion)

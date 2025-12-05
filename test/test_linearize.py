@@ -16,7 +16,7 @@ class TestLinearization:
 
     def _parse_and_get_lhs(self, vnnlib_content: str):
         """Helper method to parse VNNLIB content and extract LHS of first assertion."""
-        query = vnnlib.parse_vnnlib_str(vnnlib_content)
+        query = vnnlib.parse_query_string(vnnlib_content)
         assertion = query.assertions[0]
         comparison = assertion.children()[0]
         lhs = comparison.children()[0]

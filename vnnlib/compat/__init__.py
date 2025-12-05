@@ -45,7 +45,7 @@ def transform(query):
     -------
     >>> import vnnlib
     >>> import vnnlib.compat
-    >>> query = vnnlib.parse_vnnlib_str(content)
+    >>> query = vnnlib.parse_query_string(content)
     >>> cases = vnnlib.compat.transform(query)
     >>> case = cases[0]
     >>> print(f"Input bounds: {case.input_box}")
