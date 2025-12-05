@@ -46,7 +46,7 @@ class TestScopeChecker:
         ))
         """
         with pytest.raises(vnnlib.VNNLibException) as exc_info:
-            vnnlib.parse_vnnlib_str(invalid_content)
+            vnnlib.parse_query_string(invalid_content)
 
         json_error = self._assert_error_count(exc_info, 1)
         self._assert_error_contains(json_error, "MultipleDeclaration", "X")
@@ -69,7 +69,7 @@ class TestScopeChecker:
         ))
         """
         with pytest.raises(vnnlib.VNNLibException) as exc_info:
-            vnnlib.parse_vnnlib_str(invalid_content)
+            vnnlib.parse_query_string(invalid_content)
 
         json_error = self._assert_error_count(exc_info, 1)
         self._assert_error_contains(json_error, "UndeclaredVariable", "Z")
@@ -92,7 +92,7 @@ class TestScopeChecker:
         ))
         """
         with pytest.raises(vnnlib.VNNLibException) as exc_info:
-            vnnlib.parse_vnnlib_str(invalid_content)
+            vnnlib.parse_query_string(invalid_content)
             
         json_error = self._assert_error_count(exc_info, 2)
 
@@ -120,7 +120,7 @@ class TestScopeChecker:
         ))
         """
         with pytest.raises(vnnlib.VNNLibException) as exc_info:
-            vnnlib.parse_vnnlib_str(invalid_content)
+            vnnlib.parse_query_string(invalid_content)
 
         json_error = self._assert_error_count(exc_info, 1)
         
@@ -144,7 +144,7 @@ class TestScopeChecker:
         ))
         """
         with pytest.raises(vnnlib.VNNLibException) as exc_info:
-            vnnlib.parse_vnnlib_str(invalid_content)
+            vnnlib.parse_query_string(invalid_content)
 
         json_error = self._assert_error_count(exc_info, 1)
         self._assert_error_contains(json_error, "TooManyIndices", "X[1,2,3]")
@@ -165,7 +165,7 @@ class TestScopeChecker:
         ))
         """
         with pytest.raises(vnnlib.VNNLibException) as exc_info:
-            vnnlib.parse_vnnlib_str(invalid_content)
+            vnnlib.parse_query_string(invalid_content)
 
         json_error = self._assert_error_count(exc_info, 1)
         self._assert_error_contains(json_error, "NotEnoughIndices", "X[1]")
@@ -186,7 +186,7 @@ class TestScopeChecker:
         ))
         """
         with pytest.raises(vnnlib.VNNLibException) as exc_info:
-            vnnlib.parse_vnnlib_str(invalid_content)
+            vnnlib.parse_query_string(invalid_content)
 
         json_error = self._assert_error_count(exc_info, 1)
         self._assert_error_contains(json_error, "InvalidScalarAccess", "X[0]")

@@ -14,7 +14,7 @@ class TestDNFConversion:
 
     def _parse_and_get_bool_expr(self, vnnlib_content: str):
         """Helper method to parse VNNLIB content and extract Boolean expression from first assertion."""
-        query = vnnlib.parse_vnnlib_str(vnnlib_content)
+        query = vnnlib.parse_query_string(vnnlib_content)
         assertion = query.assertions[0]
         return assertion.expr
 
