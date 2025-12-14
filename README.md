@@ -14,7 +14,7 @@ Features include:
 
 ## Installation
 
-Install the latest stable version via PyPi
+Install the latest stable version via PyPi:
 ```bash
 pip install vnnlib
 ```
@@ -36,12 +36,3 @@ for assertion in query.assertions:
 | VNNLIB-Python version | VNNLIB version |
 | --- | --- |
 | v1.0 | v2.0 |
-
-## License
-
-MIT License
-
-
-
-
-
