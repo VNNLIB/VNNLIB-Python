@@ -36,7 +36,7 @@ def benchmark_parse(file_path, iterations=1):
         start_time = time.perf_counter()
         
         try:
-            query = vnnlib.parse_vnnlib(file_path)
+            query = vnnlib.parse_query_file(file_path)
             end_time = time.perf_counter()
             
             parse_time = end_time - start_time

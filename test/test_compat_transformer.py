@@ -14,7 +14,7 @@ class TestCompatTransformer:
 
     def _parse_and_transform(self, vnnlib_content: str) -> List[vnnlib.compat.SpecCase]:
         """Helper method to parse VNNLIB content and transform to reachability format."""
-        query = vnnlib.parse_vnnlib_str(vnnlib_content)
+        query = vnnlib.parse_query_string(vnnlib_content)
         return vnnlib.compat.transform(query)
 
     def _assert_box_bounds(self, input_box: List[Tuple[float, float]], expected_bounds: List[Tuple[float, float]]):

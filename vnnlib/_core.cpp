@@ -7,7 +7,7 @@
 
 #include "VNNLib.h"                
 #include "TypeChecker.h"     
-#include "TypedAST.h"
+#include "TypedAST.h"     
 #include "TypedBuilder.h"
 #include "LinearArithExpr.h"
 #include "DNFConverter.h"
@@ -70,7 +70,7 @@ PYBIND11_MODULE(_core, m) {
 	// --- Arithmetic Operations --- 
 	py::class_<TArithExpr, TNode>(m, "ArithExpr")
 		.def_property_readonly("dtype", [](const TArithExpr& e){ return e.dtype; })
-		.def("linearize", [](const TArithExpr& e){
+		.def("to_linear_expr", [](const TArithExpr& e){
 			auto lin_expr = linearize(&e);
 			return py::cast(lin_expr.release(), py::return_value_policy::take_ownership);
 		});
@@ -128,7 +128,7 @@ PYBIND11_MODULE(_core, m) {
 
   	// ---------- Boolean Operations ----------
 	py::class_<TBoolExpr, TNode>(m, "BoolExpr")
-		.def("dnf_form", [](const TBoolExpr& e){
+		.def("to_dnf", [](const TBoolExpr& e){
 			DNF dnf = toDNF(&e);
 			py::list py_dnf;
 
@@ -143,7 +143,7 @@ PYBIND11_MODULE(_core, m) {
 			return py_dnf;
 		});
 
-	py::class_<TCompare, TBoolExpr>(m, "Compare")
+	py::class_<TCompare, TBoolExpr>(m, "Comparison")
 		.def_property_readonly("lhs", [](const TCompare& n){ return n.lhs.get(); }, py::return_value_policy::reference_internal)
 		.def_property_readonly("rhs", [](const TCompare& n){ return n.rhs.get(); }, py::return_value_policy::reference_internal);
 
@@ -162,8 +162,8 @@ PYBIND11_MODULE(_core, m) {
 			return args_tuple;
 		});
 
-	py::class_<TAnd, TBoolExpr>(m, "And");
-	py::class_<TOr, TBoolExpr>(m, "Or");
+	py::class_<TAnd, TConnective>(m, "And");
+	py::class_<TOr, TConnective>(m, "Or");
 
 	// --- Assertion ---
 	py::class_<TAssertion, TNode>(m, "Assertion")
@@ -258,13 +258,13 @@ PYBIND11_MODULE(_core, m) {
 								py::return_value_policy::reference_internal);
 
 	// --- API ---
-	m.def("parse_vnnlib", [](const std::string& path) {
+	m.def("parse_query_file", [](const std::string& path) {
 		return parseQueryFile(path);
 	},
 	py::return_value_policy::move,
 	py::arg("path"));
 	
-	m.def("parse_vnnlib_str", [](const std::string& content) {
+	m.def("parse_query_string", [](const std::string& content) {
 		return parseQueryString(content);
 	},
 	py::return_value_policy::move,

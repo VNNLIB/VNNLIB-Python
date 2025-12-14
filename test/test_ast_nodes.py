@@ -2,7 +2,7 @@
 Usage: test_ast_nodes.py <vnnlib_file>"""
 
 import sys
-from vnnlib import parse_vnnlib as parse
+from vnnlib import parse_query_file as parse
 
 def walk(n, d=0):
     print("  " * d + f"{type(n).__name__}: {n}")

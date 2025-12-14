@@ -14,7 +14,7 @@ class TestDNFConversion:
 
     def _parse_and_get_bool_expr(self, vnnlib_content: str):
         """Helper method to parse VNNLIB content and extract Boolean expression from first assertion."""
-        query = vnnlib.parse_vnnlib_str(vnnlib_content)
+        query = vnnlib.parse_query_string(vnnlib_content)
         assertion = query.assertions[0]
         return assertion.expr
 
@@ -41,7 +41,7 @@ class TestDNFConversion:
         (assert (<= X[0] 10.0))
         """
         bool_expr = self._parse_and_get_bool_expr(content)
-        dnf = bool_expr.dnf_form()
+        dnf = bool_expr.to_dnf()
         
         self._assert_dnf_equals(dnf, [{"(<= X [0] 10.0) "}])
 
@@ -58,7 +58,7 @@ class TestDNFConversion:
         (assert (and (<= X[0] 10.0) (>= X[1] 5.0)))
         """
         bool_expr = self._parse_and_get_bool_expr(content)
-        dnf = bool_expr.dnf_form()
+        dnf = bool_expr.to_dnf()
         
         # AND in DNF: single clause with multiple literals
         self._assert_dnf_equals(dnf, [{"(<= X [0] 10.0) ", "(>= X [1] 5.0) "}])
@@ -74,7 +74,7 @@ class TestDNFConversion:
         (assert (and (<= X[0] 10.0) (>= X[1] 5.0) (<= X[2] 20.0)))
         """
         bool_expr = self._parse_and_get_bool_expr(content)
-        dnf = bool_expr.dnf_form()
+        dnf = bool_expr.to_dnf()
         
         self._assert_dnf_equals(dnf, [{"(<= X [0] 10.0) ", "(>= X [1] 5.0) ", "(<= X [2] 20.0) "}])
 
@@ -91,7 +91,7 @@ class TestDNFConversion:
         (assert (or (<= X[0] 10.0) (>= X[1] 5.0)))
         """
         bool_expr = self._parse_and_get_bool_expr(content)
-        dnf = bool_expr.dnf_form()
+        dnf = bool_expr.to_dnf()
         
         # OR in DNF: multiple clauses with single literals
         self._assert_dnf_equals(dnf, [{"(<= X [0] 10.0) "}, {"(>= X [1] 5.0) "}])
@@ -107,7 +107,7 @@ class TestDNFConversion:
         (assert (or (<= X[0] 10.0) (>= X[1] 5.0) (<= X[2] 0.0)))
         """
         bool_expr = self._parse_and_get_bool_expr(content)
-        dnf = bool_expr.dnf_form()
+        dnf = bool_expr.to_dnf()
         
         self._assert_dnf_equals(dnf, [{"(<= X [0] 10.0) "}, {"(>= X [1] 5.0) "}, {"(<= X [2] 0.0) "}])
 
@@ -126,7 +126,7 @@ class TestDNFConversion:
                      (or (<= Y[1] 30.0) (>= Y[2] 25.0))))
         """
         bool_expr = self._parse_and_get_bool_expr(content)
-        dnf = bool_expr.dnf_form()
+        dnf = bool_expr.to_dnf()
         
         # Should distribute to 8 clauses (2×2×2), each with 3 literals
         self._assert_dnf_equals(dnf, [
@@ -154,7 +154,7 @@ class TestDNFConversion:
                      (or (>= Y[0] 20.0) (<= Y[1] 25.0))))
         """
         bool_expr = self._parse_and_get_bool_expr(content)
-        dnf = bool_expr.dnf_form()
+        dnf = bool_expr.to_dnf()
         
         self._assert_dnf_equals(dnf, [
             {"(<= X [0] 10.0) ", "(>= Y [0] 20.0) "},
@@ -176,9 +176,9 @@ class TestDNFConversion:
         (assert (or (<= X[0] 10.0) (>= X[1] 5.0)))
         """
         bool_expr = self._parse_and_get_bool_expr(content)
-        dnf = bool_expr.dnf_form()
+        dnf = bool_expr.to_dnf()
         
-        # Check that literals are proper Compare objects with valid LHS/RHS
+        # Check that literals are proper Comparison objects with valid LHS/RHS
         for clause in dnf:
             for literal in clause:
                 assert hasattr(literal, 'lhs'), "Literal should have LHS"
@@ -197,7 +197,7 @@ class TestDNFConversion:
         (assert (and (<= (+ X[0] X[1]) 10.0) (>= (* -1.0 X[0]) -5.0)))
         """
         bool_expr = self._parse_and_get_bool_expr(content)
-        dnf = bool_expr.dnf_form()
+        dnf = bool_expr.to_dnf()
         
         self._assert_dnf_equals(dnf, [{"(<= (+ X [0] X [1]) 10.0) ", "(>= (* -1.0 X [0]) -5.0) "}])
 

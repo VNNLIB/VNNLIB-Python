@@ -8,7 +8,7 @@ Basic Usage:
     import vnnlib
     
     # Parse a VNNLIB file
-    query = vnnlib.parse_vnnlib("path/to/file.vnnlib")
+    query = vnnlib.parse_query_file("path/to/file.vnnlib")
     
     # Access networks and constraints
     for network in query.networks:
@@ -21,7 +21,7 @@ Basic Usage:
 
 from ._core import (
     # Parsing functions
-    parse_vnnlib, parse_vnnlib_str,
+    parse_query_file, parse_query_string,
     
     # Core AST node types
     Query, Network, Assertion,
@@ -31,7 +31,7 @@ from ._core import (
     # Expression types
     ArithExpr, BoolExpr, 
     Var, Literal, Float, Int, Negate, Plus, Minus, Multiply,
-    Compare, GreaterThan, GreaterEqual, LessThan, LessEqual, Equal, NotEqual,
+    Comparison, GreaterThan, GreaterEqual, LessThan, LessEqual, Equal, NotEqual,
     Connective, And, Or,
     
     # Linear arithmetic
@@ -52,7 +52,7 @@ __url__ = "https://github.com/VNNLIB/VNNLIB-Standard"
 
 __all__ = [
     # Parsing functions
-    "parse_vnnlib", "parse_vnnlib_str",
+    "parse_query_file", "parse_query_string",
     
     # Core AST nodes
     "Query", "Network", "Assertion", 
@@ -62,7 +62,7 @@ __all__ = [
     # Expression types  
     "ArithExpr", "BoolExpr",
     "Var", "Literal", "Float", "Int", "Negate", "Plus", "Minus", "Multiply",
-    "Compare", "GreaterThan", "GreaterEqual", "LessThan", "LessEqual", "Equal", "NotEqual",
+    "Comparison", "GreaterThan", "GreaterEqual", "LessThan", "LessEqual", "Equal", "NotEqual",
     "Connective", "And", "Or",
     
     # Linear arithmetic
