@@ -7,7 +7,7 @@
 
 #include "VNNLib.h"                
 #include "TypeChecker.h"     
-#include "TypedAbsyn.h"     
+#include "TypedAST.h"
 #include "TypedBuilder.h"
 #include "LinearArithExpr.h"
 #include "DNFConverter.h"
@@ -259,13 +259,13 @@ PYBIND11_MODULE(_core, m) {
 
 	// --- API ---
 	m.def("parse_vnnlib", [](const std::string& path) {
-		return parse_query(path);
+		return parseQueryFile(path);
 	},
 	py::return_value_policy::move,
 	py::arg("path"));
 	
 	m.def("parse_vnnlib_str", [](const std::string& content) {
-		return parse_query_str(content);
+		return parseQueryString(content);
 	},
 	py::return_value_policy::move,
 	py::arg("content"));
