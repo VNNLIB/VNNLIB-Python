@@ -45,7 +45,7 @@ from ._core import (
 )
 
 # Module metadata
-__version__ = "0.0.1-dev"
+__version__ = "1.0.0-dev"
 __author__ = "Allen Antony" 
 __description__ = "Python bindings for VNNLib verification language"
 __url__ = "https://github.com/VNNLIB/VNNLIB-Standard"
