@@ -56,7 +56,7 @@ The C++ core library is located in the `cpp/` submodule.
 
 ## Making a release
 
-1. Update the version number in `pyproject.toml`.
+1. Update the version number in `pyproject.toml` and `vnnlib.__init__.py`.
 
 2. Update `README.md` with a new entry to the compatibility table if applicable.
 
