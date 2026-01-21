@@ -36,3 +36,4 @@ for assertion in query.assertions:
 | VNNLIB-Python version | VNNLIB version |
 | --- | --- |
 | v1.0 | v2.0 |
+| v1.0.1 | v2.0 |
