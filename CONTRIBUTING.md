@@ -70,3 +70,7 @@ The C++ core library is located in the `cpp/` submodule.
 5. The **Build and Deploy Python Wheels** GitHub workflow will automatically trigger:
    - It builds Python wheels for Linux, Windows, and macOS.
    - It uploads these artifacts to PyPI (or TestPyPI if configured as a prelease).
+
+## Making a pre-release
+
+To deploy to TestPyPI you can follow the same instructions as above, but instead of making a `Release` on GitHub, you should make a `Pre-Release`.
