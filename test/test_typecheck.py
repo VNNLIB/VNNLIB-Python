@@ -281,7 +281,7 @@ class TestTypeChecker:
         assert query.networks[0].inputs[1].initialized, "Expected X2 to be initialized"
 
     def test_double_initialized_input_error(self):
-        """Test that initialized inputs are picked up correctly."""
+        """Test that duplicate initialized inputs error correctly."""
         invalid_content = """
         (vnnlib-version <2.0>)
         (declare-network acc
@@ -294,8 +294,7 @@ class TestTypeChecker:
             vnnlib.parse_query_string(invalid_content)
 
         json_error = self._assert_error_count(exc_info, 1)
-
-        print(json_error)
+        
         # Check that the right error is being thrown
         assert "MultipleInitialized" in json_error["errors"][0]["errorCode"]
                 

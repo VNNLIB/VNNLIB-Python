@@ -47,7 +47,11 @@ from ._core import (
 )
 
 # Module metadata
-__version__ = version("vnnlib")
+try:
+    __version__ = version(__name__)
+except Exception:
+    __version__ = "dev-version"
+
 __author__ = "Allen Antony and Matthew Daggitt" 
 __description__ = "Python bindings for VNN-Lib verification language"
 __url__ = "https://github.com/VNNLIB/VNNLIB-Standard"
