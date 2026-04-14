@@ -265,6 +265,40 @@ class TestTypeChecker:
         """
         vnnlib.parse_query_string(content)  # Should not raise an error
 
+    def test_initialized_inputs(self):
+        """Test that initialized inputs are picked up correctly."""
+        content = """
+        (vnnlib-version <2.0>)
+        (declare-network acc
+            (declare-input X1 int16 [1])
+            (declare-input X2 int16 [1] initialized)
+            (declare-output Y int16 [1])
+        )
+        (assert (<= (+ X1[0] 42) Y[0]))
+        """
+        query = vnnlib.parse_query_string(content)  # Should not raise an error
+        assert not query.networks[0].inputs[0].initialized, "Expected X1 to not be initialized"
+        assert query.networks[0].inputs[1].initialized, "Expected X2 to be initialized"
+
+    def test_double_initialized_input_error(self):
+        """Test that initialized inputs are picked up correctly."""
+        invalid_content = """
+        (vnnlib-version <2.0>)
+        (declare-network acc
+            (declare-input X int16 [1] initialized initialized)
+            (declare-output Y int16 [1])
+        )
+        (assert (<= (+ X[0] 42) Y[0]))
+        """
+        with pytest.raises(vnnlib.VNNLibException) as exc_info:
+            vnnlib.parse_query_string(invalid_content)
+
+        json_error = self._assert_error_count(exc_info, 1)
+
+        print(json_error)
+        # Check that the right error is being thrown
+        assert "MultipleInitialized" in json_error["errors"][0]["errorCode"]
+                
 
 if __name__ == "__main__":
     pytest.main([__file__, "-v"])

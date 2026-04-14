@@ -176,6 +176,7 @@ PYBIND11_MODULE(_core, m) {
 			if (d.symbol->onnxName.empty()) return py::none();
 			return py::str(d.symbol->onnxName);
 		})
+		.def_property_readonly("initialized", [](const TInputDefinition& d){ return d.initialized; })
 		.def_property_readonly("dtype", [](const TInputDefinition& d){ return d.symbol ? d.symbol->dtype : TDataType::Unknown; })
 		.def_property_readonly("shape", [](const TInputDefinition& d){ return d.symbol ? d.symbol->shape : Shape{}; })
 		.def_property_readonly("kind",  [](const TInputDefinition& d){ return d.symbol ? d.symbol->kind : SymbolKind::Unknown; })
