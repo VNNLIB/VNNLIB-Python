@@ -19,6 +19,8 @@ Basic Usage:
     cases = vnnlib.compat.transform(query)
 """
 
+from importlib.metadata import version
+
 from ._core import (
     # Parsing functions
     parse_query_file, parse_query_string,
@@ -45,7 +47,11 @@ from ._core import (
 )
 
 # Module metadata
-__version__ = "1.0.1"
+try:
+    __version__ = version(__name__)
+except Exception:
+    __version__ = "dev-version"
+
 __author__ = "Allen Antony and Matthew Daggitt" 
 __description__ = "Python bindings for VNN-Lib verification language"
 __url__ = "https://github.com/VNNLIB/VNNLIB-Standard"
