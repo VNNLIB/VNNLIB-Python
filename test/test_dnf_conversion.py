@@ -35,8 +35,8 @@ class TestDNFConversion:
         content = """
         (vnnlib-version <2.0>)
         (declare-network test
-            (declare-input X Real [1])
-            (declare-output Y Real [1])
+            (declare-input X real [1])
+            (declare-output Y real [1])
         )
         (assert (<= X[0] 10.0))
         """
@@ -52,8 +52,8 @@ class TestDNFConversion:
         content = """
         (vnnlib-version <2.0>)
         (declare-network test
-            (declare-input X Real [2])
-            (declare-output Y Real [1])
+            (declare-input X real [2])
+            (declare-output Y real [1])
         )
         (assert (and (<= X[0] 10.0) (>= X[1] 5.0)))
         """
@@ -68,8 +68,8 @@ class TestDNFConversion:
         content = """
         (vnnlib-version <2.0>)
         (declare-network test
-            (declare-input X Real [3])
-            (declare-output Y Real [1])
+            (declare-input X real [3])
+            (declare-output Y real [1])
         )
         (assert (and (<= X[0] 10.0) (>= X[1] 5.0) (<= X[2] 20.0)))
         """
@@ -85,8 +85,8 @@ class TestDNFConversion:
         content = """
         (vnnlib-version <2.0>)
         (declare-network test
-            (declare-input X Real [2])
-            (declare-output Y Real [1])
+            (declare-input X real [2])
+            (declare-output Y real [1])
         )
         (assert (or (<= X[0] 10.0) (>= X[1] 5.0)))
         """
@@ -101,8 +101,8 @@ class TestDNFConversion:
         content = """
         (vnnlib-version <2.0>)
         (declare-network test
-            (declare-input X Real [3])
-            (declare-output Y Real [1])
+            (declare-input X real [3])
+            (declare-output Y real [1])
         )
         (assert (or (<= X[0] 10.0) (>= X[1] 5.0) (<= X[2] 0.0)))
         """
@@ -118,8 +118,8 @@ class TestDNFConversion:
         content = """
         (vnnlib-version <2.0>)
         (declare-network test
-            (declare-input X Real [3])
-            (declare-output Y Real [3])
+            (declare-input X real [3])
+            (declare-output Y real [3])
         )
         (assert (and (or (<= X[0] 10.0) (>= X[1] 5.0)) 
                      (or (<= X[2] 20.0) (>= Y[0] 15.0))
@@ -147,8 +147,8 @@ class TestDNFConversion:
         content = """
         (vnnlib-version <2.0>)
         (declare-network test
-            (declare-input X Real [4])
-            (declare-output Y Real [2])
+            (declare-input X real [4])
+            (declare-output Y real [2])
         )
         (assert (and (or (<= X[0] 10.0) (and (>= X[1] 5.0) (<= X[2] 15.0))) 
                      (or (>= Y[0] 20.0) (<= Y[1] 25.0))))
@@ -170,8 +170,8 @@ class TestDNFConversion:
         content = """
         (vnnlib-version <2.0>)
         (declare-network test
-            (declare-input X Real [2])
-            (declare-output Y Real [1])
+            (declare-input X real [2])
+            (declare-output Y real [1])
         )
         (assert (or (<= X[0] 10.0) (>= X[1] 5.0)))
         """
@@ -191,8 +191,8 @@ class TestDNFConversion:
         content = """
         (vnnlib-version <2.0>)
         (declare-network test
-            (declare-input X Real [2])
-            (declare-output Y Real [1])
+            (declare-input X real [2])
+            (declare-output Y real [1])
         )
         (assert (and (<= (+ X[0] X[1]) 10.0) (>= (* -1.0 X[0]) -5.0)))
         """

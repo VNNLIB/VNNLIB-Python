@@ -39,7 +39,7 @@ class TestTypeChecker:
 
     def test_float_variable_with_int_constant(self):
         """
-        Tests that an expression with a Real variable to an integer constant raises a TypeMismatch error.
+        Tests that an expression with a real variable to an integer constant raises a TypeMismatch error.
         """
         invalid_content = """
         (vnnlib-version <2.0>)

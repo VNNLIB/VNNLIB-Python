@@ -40,13 +40,13 @@ class TestNetworkCongruenceCheck:
         content = """
         (vnnlib-version <2.0>)
         (declare-network net1
-            (declare-input X1 Real [2])
-            (declare-output Y1 Real [1])
+            (declare-input X1 real [2])
+            (declare-output Y1 real [1])
         )
         (declare-network net2
             (equal-to net1)
-            (declare-input X2 Real [2])
-            (declare-output Y2 Real [1])
+            (declare-input X2 real [2])
+            (declare-output Y2 real [1])
         )
         (assert (>= X1[0] 0.0))
         """
@@ -57,13 +57,13 @@ class TestNetworkCongruenceCheck:
         content = """
         (vnnlib-version <2.0>)
         (declare-network net1
-            (declare-input X1 Real [3])
-            (declare-output Y1 Real [2])
+            (declare-input X1 real [3])
+            (declare-output Y1 real [2])
         )
         (declare-network net2
             (isomorphic-to net1)
-            (declare-input X2 Real [3])
-            (declare-output Y2 Real [2])
+            (declare-input X2 real [3])
+            (declare-output Y2 real [2])
         )
         (assert (>= X1[0] 0.0))
         """
@@ -76,13 +76,13 @@ class TestNetworkCongruenceCheck:
         invalid_content = """
         (vnnlib-version <2.0>)
         (declare-network net1
-            (declare-input X1 Real [2, 3])
-            (declare-output Y1 Real [1])
+            (declare-input X1 real [2, 3])
+            (declare-output Y1 real [1])
         )
         (declare-network net2
             (equal-to net1)
-            (declare-input X2 Real [3, 4])
-            (declare-output Y2 Real [1])
+            (declare-input X2 real [3, 4])
+            (declare-output Y2 real [1])
         )
         (assert (>= X1[0, 0] 0.0))
         """
@@ -98,14 +98,14 @@ class TestNetworkCongruenceCheck:
         invalid_content = """
         (vnnlib-version <2.0>)
         (declare-network net1
-            (declare-input X1 Real [2])
-            (declare-output Y1 Real [1])
+            (declare-input X1 real [2])
+            (declare-output Y1 real [1])
         )
         (declare-network net2
             (equal-to net1)
-            (declare-input X2 Real [2])
-            (declare-input X3 Real [2])
-            (declare-output Y2 Real [1])
+            (declare-input X2 real [2])
+            (declare-input X3 real [2])
+            (declare-output Y2 real [1])
         )
         (assert (>= X1[0] 0.0))
         """
@@ -121,13 +121,13 @@ class TestNetworkCongruenceCheck:
         invalid_content = """
         (vnnlib-version <2.0>)
         (declare-network net1
-            (declare-input X1 Real [2])
-            (declare-output Y1 Real [1])
+            (declare-input X1 real [2])
+            (declare-output Y1 real [1])
         )
         (declare-network net2
             (equal-to net1)
             (declare-input X2 int32 [2])
-            (declare-output Y2 Real [1])
+            (declare-output Y2 real [1])
         )
         (assert (>= X1[0] 0.0))
         """
@@ -146,8 +146,8 @@ class TestNetworkCongruenceCheck:
         (vnnlib-version <2.0>)
         (declare-network net1
             (equal-to nonexistent)
-            (declare-input X1 Real [2])
-            (declare-output Y1 Real [1])
+            (declare-input X1 real [2])
+            (declare-output Y1 real [1])
         )
         (assert (>= X1[0] 0.0))
         """
@@ -164,12 +164,12 @@ class TestNetworkCongruenceCheck:
         (vnnlib-version <2.0>)
         (declare-network net1
             (equal-to net2)
-            (declare-input X1 Real [2])
-            (declare-output Y1 Real [1])
+            (declare-input X1 real [2])
+            (declare-output Y1 real [1])
         )
         (declare-network net2
-            (declare-input X2 Real [2])
-            (declare-output Y2 Real [1])
+            (declare-input X2 real [2])
+            (declare-output Y2 real [1])
         )
         (assert (>= X1[0] 0.0))
         """
@@ -188,18 +188,18 @@ class TestNetworkCongruenceCheck:
         content = """
         (vnnlib-version <2.0>)
         (declare-network net1
-            (declare-input X1 Real [2])
-            (declare-output Y1 Real [1])
+            (declare-input X1 real [2])
+            (declare-output Y1 real [1])
         )
         (declare-network net2
             (equal-to net1)
-            (declare-input X2 Real [2])
-            (declare-output Y2 Real [1])
+            (declare-input X2 real [2])
+            (declare-output Y2 real [1])
         )
         (declare-network net3
             (equal-to net2)
-            (declare-input X3 Real [2])
-            (declare-output Y3 Real [1])
+            (declare-input X3 real [2])
+            (declare-output Y3 real [1])
         )
         
         (assert (>= X1[0] 0.0))

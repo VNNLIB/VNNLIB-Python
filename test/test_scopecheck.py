@@ -36,9 +36,9 @@ class TestScopeChecker:
         invalid_content = """
         (vnnlib-version <2.0>)
         (declare-network acc
-            (declare-input X Real [3])
-            (declare-input X Real [3]) ; Duplicate
-            (declare-output Y Real [1])
+            (declare-input X real [3])
+            (declare-input X real [3]) ; Duplicate
+            (declare-output Y real [1])
         )
         (assert (or 
             (<= Y[0] -3.0)
@@ -60,8 +60,8 @@ class TestScopeChecker:
         invalid_content = """
         (vnnlib-version <2.0>)
         (declare-network acc
-            (declare-input X Real [3])
-            (declare-output Y Real [1])
+            (declare-input X real [3])
+            (declare-output Y real [1])
         )
         (assert (or 
             (<= Z[0] -3.0) ; Z is undeclared
@@ -83,8 +83,8 @@ class TestScopeChecker:
         invalid_content = """
         (vnnlib-version <2.0>)
         (declare-network acc
-            (declare-input X Real [0, 0])   ; invalid dimensions
-            (declare-output Y Real [])
+            (declare-input X real [0, 0])   ; invalid dimensions
+            (declare-output Y real [])
         )
         (assert (or 
             (<= X[10, 10] -3.0) ; out of bounds access
@@ -111,8 +111,8 @@ class TestScopeChecker:
         invalid_content = """
         (vnnlib-version <2.0>)
         (declare-network acc
-            (declare-input X Real [3, 4])   ; X is a 3x4 matrix
-            (declare-output Y Real [])
+            (declare-input X real [3, 4])   ; X is a 3x4 matrix
+            (declare-output Y real [])
         )
         (assert (or 
             (<= X[4, 4] -3.0) ; out of bounds access
@@ -135,8 +135,8 @@ class TestScopeChecker:
         invalid_content = """
         (vnnlib-version <2.0>)
         (declare-network acc
-            (declare-input X Real [3, 4])   ; X is a 3x4 matrix
-            (declare-output Y Real [])
+            (declare-input X real [3, 4])   ; X is a 3x4 matrix
+            (declare-output Y real [])
         )
         (assert (or 
             (<= X[1, 2, 3] -3.0) ; too many indices
@@ -156,8 +156,8 @@ class TestScopeChecker:
         invalid_content = """
         (vnnlib-version <2.0>)
         (declare-network acc
-            (declare-input X Real [3, 4])   ; X is a 3x4 matrix
-            (declare-output Y Real [])
+            (declare-input X real [3, 4])   ; X is a 3x4 matrix
+            (declare-output Y real [])
         )
         (assert (or 
             (<= X[1] -3.0) ; not enough indices
@@ -177,8 +177,8 @@ class TestScopeChecker:
         invalid_content = """
         (vnnlib-version <2.0>)
         (declare-network acc
-            (declare-input X Real [])   ; X is a scalar
-            (declare-output Y Real [])
+            (declare-input X real [])   ; X is a scalar
+            (declare-output Y real [])
         )
         (assert (or 
             (<= X[0] -3.0) ; scalar indexing
