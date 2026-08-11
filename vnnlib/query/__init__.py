@@ -1,4 +1,4 @@
-"""Boolean query expression types for the VNNLib Python bindings."""
+"""Query expression and data types for the VNNLib Python bindings."""
 
 from .._core import (
     BoolExpr,
@@ -12,6 +12,10 @@ from .._core import (
     Connective,
     And,
     Or,
+    LinearArithExpr,
+    Term,
+    DType,
+    SymbolKind,
 )
 
 __all__ = [
@@ -26,4 +30,8 @@ __all__ = [
     "Connective",
     "And",
     "Or",
+    "LinearArithExpr",
+    "Term",
+    "DType",
+    "SymbolKind",
 ]
