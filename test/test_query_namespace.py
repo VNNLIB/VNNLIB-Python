@@ -1,5 +1,8 @@
 """Tests for the public ``vnnlib.query`` namespace."""
 
+import warnings
+
+import pytest
 import vnnlib
 import vnnlib.query as query
 
@@ -274,3 +277,27 @@ class TestExceptionNamespace:
             assert getattr(query, name) is getattr(vnnlib, name), (
                 f"vnnlib.query.{name} is not identical to vnnlib.{name}"
             )
+
+
+class TestRootCompatibility:
+
+    def test_legacy_root_paths_match_query_namespace(self):
+        """Deprecated root exports remain identical to their replacements."""
+        with warnings.catch_warnings():
+            warnings.simplefilter("ignore")
+            assert vnnlib.Or is vnnlib.query.Or
+            assert vnnlib.parse_query_file is vnnlib.query.parse_query_file
+            assert vnnlib.DType is vnnlib.query.DType
+
+    def test_legacy_root_path_warns_with_replacement(self):
+        """A deprecated root export directs users to the query namespace."""
+        with pytest.warns(
+            DeprecationWarning,
+            match=r"vnnlib\.Or is deprecated; use vnnlib\.query\.Or instead",
+        ):
+            assert vnnlib.Or is vnnlib.query.Or
+
+    def test_invalid_root_name_raises_attribute_error(self):
+        """Names outside the legacy public API remain unavailable."""
+        with pytest.raises(AttributeError):
+            getattr(vnnlib, "NotAnExport")
