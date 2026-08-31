@@ -1,7 +1,7 @@
 """Type stubs for VNNLib (typed AST)"""
 
 from __future__ import annotations
-from typing import List, Tuple, Optional, Any
+from typing import List, Tuple, Optional, Any, Dict, Union
 from enum import Enum
 
 # --- Exceptions --------------------------------------------------------------
@@ -43,6 +43,51 @@ class SymbolKind(Enum):
     Hidden: SymbolKind
     Output: SymbolKind
     Unknown: SymbolKind
+
+class VerificationResult(Enum):
+    Sat: VerificationResult
+    Unsat: VerificationResult
+    Unknown: VerificationResult
+    TimedOut: VerificationResult
+
+class Capability(Enum):
+    OnnxOpsetVersions: Capability
+    OnnxElementTypes: Capability
+    OnnxOperators: Capability
+    VNNLibVersions: Capability
+    HiddenNodeTheories: Capability
+    MultipleInputOutputTheories: Capability
+    MultipleNetworkTheories: Capability
+    MultipleNodeComparisonTheories: Capability
+    ArithmeticComplexityTheories: Capability
+    OptimisedDisjunctiveReasoning: Capability
+    SerialiseAssignments: Capability
+
+class VersionRange:
+    @property
+    def minimum(self) -> str: ...
+    @property
+    def maximum(self) -> str: ...
+
+class OperatorSupport:
+    @property
+    def name(self) -> str: ...
+    @property
+    def element_types(self) -> List[str]: ...
+
+class Solver:
+    def __init__(self, executable: str) -> None: ...
+    def verify(
+        self,
+        query: str,
+        networks: Dict[str, str],
+        timeout: Optional[int] = ...,
+    ) -> VerificationResult: ...
+    def supports(
+        self,
+        capability: Capability,
+    ) -> Union[VersionRange, List[str], List[OperatorSupport], bool]: ...
+
 
 Shape = List[int]
 
