@@ -51,26 +51,36 @@ PYBIND11_MODULE(_core, m) {
 	.value("Unknown", vnnlib::solver::VerificationResult::Unknown)
 	.value("TimedOut", vnnlib::solver::VerificationResult::TimedOut);
 
-py::enum_<vnnlib::solver::Capability>(m, "Capability")
-	.value("OnnxOpsetVersions", vnnlib::solver::Capability::OnnxOpsetVersions)
-	.value("OnnxElementTypes", vnnlib::solver::Capability::OnnxElementTypes)
-	.value("OnnxOperators", vnnlib::solver::Capability::OnnxOperators)
-	.value("VNNLibVersions", vnnlib::solver::Capability::VNNLibVersions)
-	.value("HiddenNodeTheories", vnnlib::solver::Capability::HiddenNodeTheories)
-	.value("MultipleInputOutputTheories", vnnlib::solver::Capability::MultipleInputOutputTheories)
-	.value("MultipleNetworkTheories", vnnlib::solver::Capability::MultipleNetworkTheories)
-	.value("MultipleNodeComparisonTheories", vnnlib::solver::Capability::MultipleNodeComparisonTheories)
-	.value("ArithmeticComplexityTheories", vnnlib::solver::Capability::ArithmeticComplexityTheories)
-	.value("OptimisedDisjunctiveReasoning", vnnlib::solver::Capability::OptimisedDisjunctiveReasoning)
-	.value("SerialiseAssignments", vnnlib::solver::Capability::SerialiseAssignments);
 
-py::class_<vnnlib::solver::VersionRange>(m, "VersionRange")
-	.def_property_readonly("minimum", [](const vnnlib::solver::VersionRange& range){ return range.minimum; })
-	.def_property_readonly("maximum", [](const vnnlib::solver::VersionRange& range){ return range.maximum; });
+	py::enum_<vnnlib::solver::Capability>(m, "Capability")
+		.value("OnnxOpsetVersions", vnnlib::solver::Capability::OnnxOpsetVersions)
+		.value("OnnxElementTypes", vnnlib::solver::Capability::OnnxElementTypes)
+		.value("OnnxOperators", vnnlib::solver::Capability::OnnxOperators)
+		.value("VNNLibVersions", vnnlib::solver::Capability::VNNLibVersions)
+		.value("HiddenNodeTheories", vnnlib::solver::Capability::HiddenNodeTheories)
+		.value("MultipleInputOutputTheories", vnnlib::solver::Capability::MultipleInputOutputTheories)
+		.value("MultipleNetworkTheories", vnnlib::solver::Capability::MultipleNetworkTheories)
+		.value("MultipleNodeComparisonTheories", vnnlib::solver::Capability::MultipleNodeComparisonTheories)
+		.value("ArithmeticComplexityTheories", vnnlib::solver::Capability::ArithmeticComplexityTheories)
+		.value("OptimisedDisjunctiveReasoning", vnnlib::solver::Capability::OptimisedDisjunctiveReasoning)
+		.value("SerialiseAssignments", vnnlib::solver::Capability::SerialiseAssignments);
 
-py::class_<vnnlib::solver::OperatorSupport>(m, "OperatorSupport")
-	.def_property_readonly("name", [](const vnnlib::solver::OperatorSupport& support){ return support.name; })
-	.def_property_readonly("element_types", [](const vnnlib::solver::OperatorSupport& support){ return support.elementTypes; });
+	py::class_<vnnlib::solver::VersionRange>(m, "VersionRange")
+		.def_property_readonly("minimum", [](const vnnlib::solver::VersionRange& range){ return range.minimum; })
+		.def_property_readonly("maximum", [](const vnnlib::solver::VersionRange& range){ return range.maximum; });
+
+	py::class_<vnnlib::solver::OperatorSupport>(m, "OperatorSupport")
+		.def_property_readonly("name", [](const vnnlib::solver::OperatorSupport& support){ return support.name; })
+		.def_property_readonly("element_types", [](const vnnlib::solver::OperatorSupport& support){ return support.elementTypes; });
+
+	py::class_<vnnlib::solver::Solver>(m, "Solver")
+		.def(py::init<const std::string&>(), py::arg("executable"))
+		.def("verify", &vnnlib::solver::Solver::verify,
+			py::arg("query"),
+			py::arg("networks"),
+			py::arg("timeout") = std::nullopt)
+		.def("supports", &vnnlib::solver::Solver::supports,
+			py::arg("capability"));
 
 	py::class_<TNode>(m, "Node")
 		.def("__str__", [](const TNode& n){ return n.toString(); })
