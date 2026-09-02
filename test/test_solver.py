@@ -191,6 +191,13 @@ crash = true
         solver.verify(str(query), {})
 
 
+def test_verify_rejects_missing_executable():
+    solver = Solver("definitely-not-a-real-vnnlib-solver")
+
+    with pytest.raises(vnnlib.VNNLibException):
+        solver.verify("query.vnnlib", {})
+
+
 def test_verify_forwards_timeout(tmp_path, monkeypatch):
     query = tmp_path / "query.vnnlib"
     query.write_text(
@@ -401,6 +408,13 @@ def test_supports_booleans(tmp_path, monkeypatch, capability, expected):
     solver = get_supports_solver(tmp_path, monkeypatch)
 
     assert solver.supports(capability) == expected
+
+
+def test_supports_rejects_missing_executable():
+    solver = Solver("definitely-not-a-real-vnnlib-solver")
+
+    with pytest.raises(vnnlib.VNNLibException):
+        solver.supports(Capability.OnnxOpsetVersions)
 
 
 def test_supports_operators(tmp_path, monkeypatch):
