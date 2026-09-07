@@ -8,7 +8,7 @@ and precision compatibility issues.
 
 import json
 import pytest
-import vnnlib
+import vnnlib.query
 from typing import Dict, Any, Set
 
 
@@ -39,7 +39,7 @@ class TestTypeChecker:
 
     def test_float_variable_with_int_constant(self):
         """
-        Tests that an expression with a Real variable to an integer constant raises a TypeMismatch error.
+        Tests that an expression with a real variable to an integer constant raises a TypeMismatch error.
         """
         invalid_content = """
         (vnnlib-version <2.0>)
@@ -49,8 +49,8 @@ class TestTypeChecker:
         )
         (assert (<= Y[0] 5))
         """
-        with pytest.raises(vnnlib.VNNLibException) as exc_info:
-            vnnlib.parse_query_string(invalid_content)
+        with pytest.raises(vnnlib.query.VNNLibException) as exc_info:
+            vnnlib.query.parse_query_string(invalid_content)
 
         json_error = self._assert_error_count(exc_info, 1)
         self._assert_error_contains(json_error, "TypeMismatch", "5")
@@ -67,8 +67,8 @@ class TestTypeChecker:
         )
         (assert (<= Y[0] 3.14))
         """
-        with pytest.raises(vnnlib.VNNLibException) as exc_info:
-            vnnlib.parse_query_string(invalid_content)
+        with pytest.raises(vnnlib.query.VNNLibException) as exc_info:
+            vnnlib.query.parse_query_string(invalid_content)
 
         json_error = self._assert_error_count(exc_info, 1)
         self._assert_error_contains(json_error, "TypeMismatch", "3.14")
@@ -85,8 +85,8 @@ class TestTypeChecker:
         )
         (assert (<= Y[0] -5))
         """
-        with pytest.raises(vnnlib.VNNLibException) as exc_info:
-            vnnlib.parse_query_string(invalid_content)
+        with pytest.raises(vnnlib.query.VNNLibException) as exc_info:
+            vnnlib.query.parse_query_string(invalid_content)
 
         json_error = self._assert_error_count(exc_info, 1)
         self._assert_error_contains(json_error, "TypeMismatch", "-5")
@@ -106,8 +106,8 @@ class TestTypeChecker:
         )
         (assert (<= X[0] Z[0]))
         """
-        with pytest.raises(vnnlib.VNNLibException) as exc_info:
-            vnnlib.parse_query_string(invalid_content)
+        with pytest.raises(vnnlib.query.VNNLibException) as exc_info:
+            vnnlib.query.parse_query_string(invalid_content)
 
         json_error = self._assert_error_count(exc_info, 1)
         self._assert_error_contains(json_error, "TypeMismatch", "Z")
@@ -125,8 +125,8 @@ class TestTypeChecker:
         )
         (assert (<= X[0] Z[0]))
         """
-        with pytest.raises(vnnlib.VNNLibException) as exc_info:
-            vnnlib.parse_query_string(invalid_content)
+        with pytest.raises(vnnlib.query.VNNLibException) as exc_info:
+            vnnlib.query.parse_query_string(invalid_content)
 
         json_error = self._assert_error_count(exc_info, 1)
         self._assert_error_contains(json_error, "TypeMismatch", "Z")
@@ -145,8 +145,8 @@ class TestTypeChecker:
         )
         (assert (<= X[0] (+ 3 3.0)))
         """
-        with pytest.raises(vnnlib.VNNLibException) as exc_info:
-            vnnlib.parse_query_string(invalid_content)
+        with pytest.raises(vnnlib.query.VNNLibException) as exc_info:
+            vnnlib.query.parse_query_string(invalid_content)
 
         json_error = self._assert_error_count(exc_info, 1)
         self._assert_error_contains(json_error, "TypeMismatch", "3.0")
@@ -166,8 +166,8 @@ class TestTypeChecker:
         )
         (assert (<= 0 (+ X[0] Z[0] 3.14)))
         """
-        with pytest.raises(vnnlib.VNNLibException) as exc_info:
-            vnnlib.parse_query_string(invalid_content)
+        with pytest.raises(vnnlib.query.VNNLibException) as exc_info:
+            vnnlib.query.parse_query_string(invalid_content)
 
         json_error = self._assert_error_count(exc_info, 2)
         
@@ -189,8 +189,8 @@ class TestTypeChecker:
         (assert (<= 0.0 Z[0]))
         (assert (<= 0.0 Y[0]))
         """
-        with pytest.raises(vnnlib.VNNLibException) as exc_info:
-            vnnlib.parse_query_string(invalid_content)
+        with pytest.raises(vnnlib.query.VNNLibException) as exc_info:
+            vnnlib.query.parse_query_string(invalid_content)
 
         json_error = self._assert_error_count(exc_info, 3)
 
@@ -213,7 +213,7 @@ class TestTypeChecker:
         )
         (assert (and (<= 0 X[0]) (<= 0 Z[0]) (<= 0 Y[0])))
         """
-        vnnlib.parse_query_string(invalid_content)  # No error expected here
+        vnnlib.query.parse_query_string(invalid_content)  # No error expected here
 
     def test_same_type_variables(self):
         """Test that variables of the same type can be used together without errors."""
@@ -226,7 +226,7 @@ class TestTypeChecker:
         )
         (assert (<= (+ X[0] Z[0]) Y[0]))
         """
-        vnnlib.parse_query_string(content)  # Should not raise an error
+        vnnlib.query.parse_query_string(content)  # Should not raise an error
 
     def test_same_precision_integers(self):
         """Test that integers of the same precision can be used together."""
@@ -239,7 +239,7 @@ class TestTypeChecker:
         )
         (assert (<= (+ X[0] Z[0] 42) Y[0]))
         """
-        vnnlib.parse_query_string(content)  # Should not raise an error
+        vnnlib.query.parse_query_string(content)  # Should not raise an error
 
     def test_float_with_float_constant(self):
         """Test that float variables work correctly with float constants."""
@@ -251,7 +251,7 @@ class TestTypeChecker:
         )
         (assert (<= (+ X[0] 3.14) Y[0]))
         """
-        vnnlib.parse_query_string(content)  # Should not raise an error
+        vnnlib.query.parse_query_string(content)  # Should not raise an error
 
     def test_int_with_int_constant(self):
         """Test that integer variables work correctly with integer constants."""
@@ -263,7 +263,7 @@ class TestTypeChecker:
         )
         (assert (<= (+ X[0] 42) Y[0]))
         """
-        vnnlib.parse_query_string(content)  # Should not raise an error
+        vnnlib.query.parse_query_string(content)  # Should not raise an error
 
     def test_initialized_inputs(self):
         """Test that initialized inputs are picked up correctly."""
@@ -276,7 +276,7 @@ class TestTypeChecker:
         )
         (assert (<= (+ X1[0] 42) Y[0]))
         """
-        query = vnnlib.parse_query_string(content)  # Should not raise an error
+        query = vnnlib.query.parse_query_string(content)  # Should not raise an error
         assert not query.networks[0].inputs[0].initialized, "Expected X1 to not be initialized"
         assert query.networks[0].inputs[1].initialized, "Expected X2 to be initialized"
 
@@ -290,8 +290,8 @@ class TestTypeChecker:
         )
         (assert (<= (+ X[0] 42) Y[0]))
         """
-        with pytest.raises(vnnlib.VNNLibException) as exc_info:
-            vnnlib.parse_query_string(invalid_content)
+        with pytest.raises(vnnlib.query.VNNLibException) as exc_info:
+            vnnlib.query.parse_query_string(invalid_content)
 
         json_error = self._assert_error_count(exc_info, 1)
         

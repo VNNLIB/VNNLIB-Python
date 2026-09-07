@@ -16,7 +16,7 @@ The tests cover:
 
 import json
 import pytest
-import vnnlib
+import vnnlib.query
 from typing import Dict, Any
 
 
@@ -40,34 +40,34 @@ class TestNetworkCongruenceCheck:
         content = """
         (vnnlib-version <2.0>)
         (declare-network net1
-            (declare-input X1 Real [2])
-            (declare-output Y1 Real [1])
+            (declare-input X1 real [2])
+            (declare-output Y1 real [1])
         )
         (declare-network net2
             (equal-to net1)
-            (declare-input X2 Real [2])
-            (declare-output Y2 Real [1])
+            (declare-input X2 real [2])
+            (declare-output Y2 real [1])
         )
         (assert (>= X1[0] 0.0))
         """
-        vnnlib.parse_query_string(content)  # Should not raise an error
+        vnnlib.query.parse_query_string(content)  # Should not raise an error
 
     def test_valid_isomorphic_to_basic(self):
         """Test valid isomorphicTo statement with matching variable shapes."""
         content = """
         (vnnlib-version <2.0>)
         (declare-network net1
-            (declare-input X1 Real [3])
-            (declare-output Y1 Real [2])
+            (declare-input X1 real [3])
+            (declare-output Y1 real [2])
         )
         (declare-network net2
             (isomorphic-to net1)
-            (declare-input X2 Real [3])
-            (declare-output Y2 Real [2])
+            (declare-input X2 real [3])
+            (declare-output Y2 real [2])
         )
         (assert (>= X1[0] 0.0))
         """
-        vnnlib.parse_query_string(content)  # Should not raise an error
+        vnnlib.query.parse_query_string(content)  # Should not raise an error
 
     # Test Congruence Mismatches ------------------------------------------------------------------
 
@@ -76,18 +76,18 @@ class TestNetworkCongruenceCheck:
         invalid_content = """
         (vnnlib-version <2.0>)
         (declare-network net1
-            (declare-input X1 Real [2, 3])
-            (declare-output Y1 Real [1])
+            (declare-input X1 real [2, 3])
+            (declare-output Y1 real [1])
         )
         (declare-network net2
             (equal-to net1)
-            (declare-input X2 Real [3, 4])
-            (declare-output Y2 Real [1])
+            (declare-input X2 real [3, 4])
+            (declare-output Y2 real [1])
         )
         (assert (>= X1[0, 0] 0.0))
         """
-        with pytest.raises(vnnlib.VNNLibException) as exc_info:
-            vnnlib.parse_query_string(invalid_content)
+        with pytest.raises(vnnlib.query.VNNLibException) as exc_info:
+            vnnlib.query.parse_query_string(invalid_content)
 
         json_error = json.loads(str(exc_info.value))
         self._assert_error_count(json_error, 1)
@@ -98,19 +98,19 @@ class TestNetworkCongruenceCheck:
         invalid_content = """
         (vnnlib-version <2.0>)
         (declare-network net1
-            (declare-input X1 Real [2])
-            (declare-output Y1 Real [1])
+            (declare-input X1 real [2])
+            (declare-output Y1 real [1])
         )
         (declare-network net2
             (equal-to net1)
-            (declare-input X2 Real [2])
-            (declare-input X3 Real [2])
-            (declare-output Y2 Real [1])
+            (declare-input X2 real [2])
+            (declare-input X3 real [2])
+            (declare-output Y2 real [1])
         )
         (assert (>= X1[0] 0.0))
         """
-        with pytest.raises(vnnlib.VNNLibException) as exc_info:
-            vnnlib.parse_query_string(invalid_content)
+        with pytest.raises(vnnlib.query.VNNLibException) as exc_info:
+            vnnlib.query.parse_query_string(invalid_content)
 
         json_error = json.loads(str(exc_info.value))
         self._assert_error_count(json_error, 1)
@@ -121,18 +121,18 @@ class TestNetworkCongruenceCheck:
         invalid_content = """
         (vnnlib-version <2.0>)
         (declare-network net1
-            (declare-input X1 Real [2])
-            (declare-output Y1 Real [1])
+            (declare-input X1 real [2])
+            (declare-output Y1 real [1])
         )
         (declare-network net2
             (equal-to net1)
             (declare-input X2 int32 [2])
-            (declare-output Y2 Real [1])
+            (declare-output Y2 real [1])
         )
         (assert (>= X1[0] 0.0))
         """
-        with pytest.raises(vnnlib.VNNLibException) as exc_info:
-            vnnlib.parse_query_string(invalid_content)
+        with pytest.raises(vnnlib.query.VNNLibException) as exc_info:
+            vnnlib.query.parse_query_string(invalid_content)
 
         json_error = json.loads(str(exc_info.value))
         self._assert_error_count(json_error, 1)
@@ -146,13 +146,13 @@ class TestNetworkCongruenceCheck:
         (vnnlib-version <2.0>)
         (declare-network net1
             (equal-to nonexistent)
-            (declare-input X1 Real [2])
-            (declare-output Y1 Real [1])
+            (declare-input X1 real [2])
+            (declare-output Y1 real [1])
         )
         (assert (>= X1[0] 0.0))
         """
-        with pytest.raises(vnnlib.VNNLibException) as exc_info:
-            vnnlib.parse_query_string(invalid_content)
+        with pytest.raises(vnnlib.query.VNNLibException) as exc_info:
+            vnnlib.query.parse_query_string(invalid_content)
 
         json_error = json.loads(str(exc_info.value))
         self._assert_error_count(json_error, 1)
@@ -164,18 +164,18 @@ class TestNetworkCongruenceCheck:
         (vnnlib-version <2.0>)
         (declare-network net1
             (equal-to net2)
-            (declare-input X1 Real [2])
-            (declare-output Y1 Real [1])
+            (declare-input X1 real [2])
+            (declare-output Y1 real [1])
         )
         (declare-network net2
-            (declare-input X2 Real [2])
-            (declare-output Y2 Real [1])
+            (declare-input X2 real [2])
+            (declare-output Y2 real [1])
         )
         (assert (>= X1[0] 0.0))
         """
         # Forward references are not supported, so this should fail
-        with pytest.raises(vnnlib.VNNLibException) as exc_info:
-            vnnlib.parse_query_string(content)
+        with pytest.raises(vnnlib.query.VNNLibException) as exc_info:
+            vnnlib.query.parse_query_string(content)
 
         json_error = json.loads(str(exc_info.value))
         self._assert_error_count(json_error, 1)
@@ -188,24 +188,24 @@ class TestNetworkCongruenceCheck:
         content = """
         (vnnlib-version <2.0>)
         (declare-network net1
-            (declare-input X1 Real [2])
-            (declare-output Y1 Real [1])
+            (declare-input X1 real [2])
+            (declare-output Y1 real [1])
         )
         (declare-network net2
             (equal-to net1)
-            (declare-input X2 Real [2])
-            (declare-output Y2 Real [1])
+            (declare-input X2 real [2])
+            (declare-output Y2 real [1])
         )
         (declare-network net3
             (equal-to net2)
-            (declare-input X3 Real [2])
-            (declare-output Y3 Real [1])
+            (declare-input X3 real [2])
+            (declare-output Y3 real [1])
         )
         
         (assert (>= X1[0] 0.0))
         """
-        with pytest.raises(vnnlib.VNNLibException) as exc_info:
-            vnnlib.parse_query_string(content)
+        with pytest.raises(vnnlib.query.VNNLibException) as exc_info:
+            vnnlib.query.parse_query_string(content)
 
         json_error = json.loads(str(exc_info.value))
         self._assert_error_count(json_error, 1)

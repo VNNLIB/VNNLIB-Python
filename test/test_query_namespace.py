@@ -80,8 +80,8 @@ class TestParsingNamespace:
         content = """
         (vnnlib-version <2.0>)
         (declare-network test
-            (declare-input X Real [1])
-            (declare-output Y Real [1])
+            (declare-input X real [1])
+            (declare-output Y real [1])
         )
         (assert (<= X[0] 10.0))
         """
@@ -92,6 +92,22 @@ class TestParsingNamespace:
         parsed_query = query.parse_query_file(str(query_path))
 
         assert isinstance(parsed_query, query.Query)
+
+    def test_parser_maps_standard_real_type(self):
+        """The parser maps the standard lowercase ``real`` type correctly."""
+        content = """
+        (vnnlib-version <2.0>)
+        (declare-network test
+            (declare-input X real [1])
+            (declare-output Y real [1])
+        )
+        (assert (<= X[0] 10.0))
+        """
+
+        parsed_query = query.parse_query_string(content)
+
+        assert parsed_query.networks[0].inputs[0].dtype == query.DType.Real
+        assert parsed_query.networks[0].outputs[0].dtype == query.DType.Real
 
 class TestQueryStructureNamespace:
 
@@ -112,8 +128,8 @@ class TestQueryStructureNamespace:
         content = """
         (vnnlib-version <2.0>)
         (declare-network test
-            (declare-input X Real [2])
-            (declare-output Y Real [1])
+            (declare-input X real [2])
+            (declare-output Y real [1])
         )
         (assert (and (<= X[0] 10.0) (>= X[1] 5.0)))
         """
@@ -143,8 +159,8 @@ class TestArithmeticNamespace:
         content = """
         (vnnlib-version <2.0>)
         (declare-network test
-            (declare-input X Real [2])
-            (declare-output Y Real [1])
+            (declare-input X real [2])
+            (declare-output Y real [1])
         )
         (assert (and (<= X[0] 10.0) (>= X[1] 5.0)))
         """
@@ -185,8 +201,8 @@ class TestBooleanNamespace:
         content = """
         (vnnlib-version <2.0>)
         (declare-network test
-            (declare-input X Real [2])
-            (declare-output Y Real [1])
+            (declare-input X real [2])
+            (declare-output Y real [1])
         )
         (assert (and (<= X[0] 10.0) (>= X[1] 5.0)))
         """
