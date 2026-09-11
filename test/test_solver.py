@@ -1,7 +1,7 @@
 import vnnlib
 import os
 import pytest
-from vnnlib.solver import Capability, Solver, VerificationResult
+from vnnlib.solver import Solver, VerificationResult
 
 
 def get_test_solver():
@@ -356,75 +356,88 @@ def get_supports_solver(tmp_path, monkeypatch, injection=""):
 
 
 @pytest.mark.parametrize(
-    "capability, minimum, maximum",
+    "method, expected",
     [
-        (Capability.OnnxOpsetVersions, "13", "21"),
-        (Capability.VNNLibVersions, "2.0", "2.0"),
+        ("supports_onnx_opset_versions", (13, 21)),
+        ("supports_vnnlib_versions", ((2, 0, None, ""), (2, 0, None, ""))),
     ],
 )
-def test_supports_version_ranges(
-    tmp_path,
-    monkeypatch,
-    capability,
-    minimum,
-    maximum,
-):
+def test_supports_version_ranges(tmp_path, monkeypatch, method, expected):
     solver = get_supports_solver(tmp_path, monkeypatch)
 
-    result = solver.supports(capability)
+    result = getattr(solver, method)()
 
-    assert result.minimum == minimum
-    assert result.maximum == maximum
+    if method == "supports_onnx_opset_versions":
+        assert (result.minimum, result.maximum) == expected
+    else:
+        minimum, maximum = expected
+        assert (
+            result.minimum.major,
+            result.minimum.minor,
+            result.minimum.patch,
+            result.minimum.extra,
+        ) == minimum
+        assert (
+            result.maximum.major,
+            result.maximum.minor,
+            result.maximum.patch,
+            result.maximum.extra,
+        ) == maximum
 
 
 @pytest.mark.parametrize(
-    "capability, expected",
+    "method, expected",
     [
         (
-            Capability.OnnxElementTypes,
-            ["real", "float32", "float64", "int32"],
+            "supports_onnx_element_types",
+            [
+                vnnlib.DType.Real,
+                vnnlib.DType.F32,
+                vnnlib.DType.F64,
+                vnnlib.DType.I32,
+            ],
         ),
-        (Capability.HiddenNodeTheories, ["NH"]),
-        (Capability.MultipleInputOutputTheories, ["SIO"]),
-        (Capability.MultipleNetworkTheories, ["SNET"]),
-        (Capability.MultipleNodeComparisonTheories, ["SNC"]),
-        (Capability.ArithmeticComplexityTheories, ["BND", "LIN"]),
+        ("supports_hidden_node_theories", ["NH"]),
+        ("supports_multiple_input_output_theories", ["SIO"]),
+        ("supports_multiple_network_theories", ["SNET"]),
+        ("supports_multiple_node_comparison_theories", ["SNC"]),
+        ("supports_arithmetic_complexity_theories", ["BND", "LIN"]),
     ],
 )
-def test_supports_lists(tmp_path, monkeypatch, capability, expected):
+def test_supports_lists(tmp_path, monkeypatch, method, expected):
     solver = get_supports_solver(tmp_path, monkeypatch)
 
-    assert solver.supports(capability) == expected
+    assert getattr(solver, method)() == expected
 
 
 @pytest.mark.parametrize(
-    "capability, expected",
+    "method, expected",
     [
-        (Capability.OptimisedDisjunctiveReasoning, False),
-        (Capability.SerialiseAssignments, False),
+        ("supports_optimised_disjunctive_reasoning", False),
+        ("supports_serialise_assignments", False),
     ],
 )
-def test_supports_booleans(tmp_path, monkeypatch, capability, expected):
+def test_supports_booleans(tmp_path, monkeypatch, method, expected):
     solver = get_supports_solver(tmp_path, monkeypatch)
 
-    assert solver.supports(capability) == expected
+    assert getattr(solver, method)() == expected
 
 
 def test_supports_rejects_missing_executable():
     solver = Solver("definitely-not-a-real-vnnlib-solver")
 
     with pytest.raises(vnnlib.VNNLibException):
-        solver.supports(Capability.OnnxOpsetVersions)
+        solver.supports_onnx_opset_versions()
 
 
 def test_supports_operators(tmp_path, monkeypatch):
     solver = get_supports_solver(tmp_path, monkeypatch)
 
-    operators = solver.supports(Capability.OnnxOperators)
+    operators = solver.supports_onnx_operators()
 
     assert [operator.name for operator in operators] == ["Gemm", "Relu"]
     assert [operator.element_types for operator in operators] == [
-        ["float32", "float64"],
+        [vnnlib.DType.F32, vnnlib.DType.F64],
         [],
     ]
 
@@ -439,10 +452,10 @@ stderr = "solver warning"
 """,
     )
 
-    result = solver.supports(Capability.OnnxOpsetVersions)
+    result = solver.supports_onnx_opset_versions()
 
-    assert result.minimum == "13"
-    assert result.maximum == "21"
+    assert result.minimum == 13
+    assert result.maximum == 21
 
 
 def test_supports_allows_nonzero_exit(tmp_path, monkeypatch):
@@ -455,10 +468,10 @@ exit_code = 7
 """,
     )
 
-    result = solver.supports(Capability.OnnxOpsetVersions)
+    result = solver.supports_onnx_opset_versions()
 
-    assert result.minimum == "13"
-    assert result.maximum == "21"
+    assert result.minimum == 13
+    assert result.maximum == 21
 
 
 def test_supports_rejects_malformed_output(tmp_path, monkeypatch):
@@ -472,7 +485,7 @@ raw_stdout = "13"
     )
 
     with pytest.raises(vnnlib.VNNLibException):
-        solver.supports(Capability.OnnxOpsetVersions)
+        solver.supports_onnx_opset_versions()
 
 
 def test_supports_rejects_abnormal_termination(tmp_path, monkeypatch):
@@ -486,4 +499,4 @@ crash = true
     )
 
     with pytest.raises(vnnlib.VNNLibException):
-        solver.supports(Capability.OnnxOpsetVersions)
+        solver.supports_onnx_opset_versions()

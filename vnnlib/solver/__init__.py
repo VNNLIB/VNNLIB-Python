@@ -1,15 +1,17 @@
 from .._core import (
     Solver,
     VerificationResult,
-    Capability,
+    SemanticVersion,
     VersionRange,
+    OpsetRange,
     OperatorSupport,
 )
 
 __all__ = [
     "Solver",
     "VerificationResult",
-    "Capability",
+    "SemanticVersion",
     "VersionRange",
+    "OpsetRange",
     "OperatorSupport",
 ]

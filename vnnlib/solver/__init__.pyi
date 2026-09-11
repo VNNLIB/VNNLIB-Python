@@ -1,7 +1,8 @@
 from .._core import (
     Solver,
     VerificationResult,
-    Capability,
+    SemanticVersion,
     VersionRange,
+    OpsetRange,
     OperatorSupport,
 )
