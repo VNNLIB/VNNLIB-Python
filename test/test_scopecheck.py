@@ -6,7 +6,7 @@ various scoping issues such as duplicate declarations, undeclared variables,
 invalid dimensions, and out-of-bounds accesses.
 """
 
-import vnnlib
+import vnnlib.query
 import pytest
 import json
 from typing import List, Dict, Any
@@ -36,17 +36,17 @@ class TestScopeChecker:
         invalid_content = """
         (vnnlib-version <2.0>)
         (declare-network acc
-            (declare-input X Real [3])
-            (declare-input X Real [3]) ; Duplicate
-            (declare-output Y Real [1])
+            (declare-input X real [3])
+            (declare-input X real [3]) ; Duplicate
+            (declare-output Y real [1])
         )
         (assert (or 
             (<= Y[0] -3.0)
             (>= Y[0] 0.0)
         ))
         """
-        with pytest.raises(vnnlib.VNNLibException) as exc_info:
-            vnnlib.parse_query_string(invalid_content)
+        with pytest.raises(vnnlib.query.VNNLibException) as exc_info:
+            vnnlib.query.parse_query_string(invalid_content)
 
         json_error = self._assert_error_count(exc_info, 1)
         self._assert_error_contains(json_error, "MultipleDeclaration", "X")
@@ -60,16 +60,16 @@ class TestScopeChecker:
         invalid_content = """
         (vnnlib-version <2.0>)
         (declare-network acc
-            (declare-input X Real [3])
-            (declare-output Y Real [1])
+            (declare-input X real [3])
+            (declare-output Y real [1])
         )
         (assert (or 
             (<= Z[0] -3.0) ; Z is undeclared
             (>= Y[0] 0.0)
         ))
         """
-        with pytest.raises(vnnlib.VNNLibException) as exc_info:
-            vnnlib.parse_query_string(invalid_content)
+        with pytest.raises(vnnlib.query.VNNLibException) as exc_info:
+            vnnlib.query.parse_query_string(invalid_content)
 
         json_error = self._assert_error_count(exc_info, 1)
         self._assert_error_contains(json_error, "UndeclaredVariable", "Z")
@@ -83,16 +83,16 @@ class TestScopeChecker:
         invalid_content = """
         (vnnlib-version <2.0>)
         (declare-network acc
-            (declare-input X Real [0, 0])   ; invalid dimensions
-            (declare-output Y Real [])
+            (declare-input X real [0, 0])   ; invalid dimensions
+            (declare-output Y real [])
         )
         (assert (or 
             (<= X[10, 10] -3.0) ; out of bounds access
             (>= Y 0.0)
         ))
         """
-        with pytest.raises(vnnlib.VNNLibException) as exc_info:
-            vnnlib.parse_query_string(invalid_content)
+        with pytest.raises(vnnlib.query.VNNLibException) as exc_info:
+            vnnlib.query.parse_query_string(invalid_content)
             
         json_error = self._assert_error_count(exc_info, 2)
 
@@ -111,16 +111,16 @@ class TestScopeChecker:
         invalid_content = """
         (vnnlib-version <2.0>)
         (declare-network acc
-            (declare-input X Real [3, 4])   ; X is a 3x4 matrix
-            (declare-output Y Real [])
+            (declare-input X real [3, 4])   ; X is a 3x4 matrix
+            (declare-output Y real [])
         )
         (assert (or 
             (<= X[4, 4] -3.0) ; out of bounds access
             (>= Y 0.0)
         ))
         """
-        with pytest.raises(vnnlib.VNNLibException) as exc_info:
-            vnnlib.parse_query_string(invalid_content)
+        with pytest.raises(vnnlib.query.VNNLibException) as exc_info:
+            vnnlib.query.parse_query_string(invalid_content)
 
         json_error = self._assert_error_count(exc_info, 1)
         
@@ -135,16 +135,16 @@ class TestScopeChecker:
         invalid_content = """
         (vnnlib-version <2.0>)
         (declare-network acc
-            (declare-input X Real [3, 4])   ; X is a 3x4 matrix
-            (declare-output Y Real [])
+            (declare-input X real [3, 4])   ; X is a 3x4 matrix
+            (declare-output Y real [])
         )
         (assert (or 
             (<= X[1, 2, 3] -3.0) ; too many indices
             (>= Y 0.0)
         ))
         """
-        with pytest.raises(vnnlib.VNNLibException) as exc_info:
-            vnnlib.parse_query_string(invalid_content)
+        with pytest.raises(vnnlib.query.VNNLibException) as exc_info:
+            vnnlib.query.parse_query_string(invalid_content)
 
         json_error = self._assert_error_count(exc_info, 1)
         self._assert_error_contains(json_error, "TooManyIndices", "X[1,2,3]")
@@ -156,16 +156,16 @@ class TestScopeChecker:
         invalid_content = """
         (vnnlib-version <2.0>)
         (declare-network acc
-            (declare-input X Real [3, 4])   ; X is a 3x4 matrix
-            (declare-output Y Real [])
+            (declare-input X real [3, 4])   ; X is a 3x4 matrix
+            (declare-output Y real [])
         )
         (assert (or 
             (<= X[1] -3.0) ; not enough indices
             (>= Y 0.0)
         ))
         """
-        with pytest.raises(vnnlib.VNNLibException) as exc_info:
-            vnnlib.parse_query_string(invalid_content)
+        with pytest.raises(vnnlib.query.VNNLibException) as exc_info:
+            vnnlib.query.parse_query_string(invalid_content)
 
         json_error = self._assert_error_count(exc_info, 1)
         self._assert_error_contains(json_error, "NotEnoughIndices", "X[1]")
@@ -177,16 +177,16 @@ class TestScopeChecker:
         invalid_content = """
         (vnnlib-version <2.0>)
         (declare-network acc
-            (declare-input X Real [])   ; X is a scalar
-            (declare-output Y Real [])
+            (declare-input X real [])   ; X is a scalar
+            (declare-output Y real [])
         )
         (assert (or 
             (<= X[0] -3.0) ; scalar indexing
             (>= Y 0.0)
         ))
         """
-        with pytest.raises(vnnlib.VNNLibException) as exc_info:
-            vnnlib.parse_query_string(invalid_content)
+        with pytest.raises(vnnlib.query.VNNLibException) as exc_info:
+            vnnlib.query.parse_query_string(invalid_content)
 
         json_error = self._assert_error_count(exc_info, 1)
         self._assert_error_contains(json_error, "InvalidScalarAccess", "X[0]")

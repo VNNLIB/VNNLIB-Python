@@ -3,8 +3,8 @@ Unit tests for CompatTransformer (reachability format conversion) functionality.
 """
 
 import pytest
-import vnnlib
-import vnnlib.compat
+import vnnlib.compat as compat
+import vnnlib.query
 from typing import List, Tuple
 import math
 
@@ -12,10 +12,10 @@ import math
 class TestCompatTransformer:
     """Test class for CompatTransformer reachability format conversion."""
 
-    def _parse_and_transform(self, vnnlib_content: str) -> List[vnnlib.compat.SpecCase]:
+    def _parse_and_transform(self, vnnlib_content: str) -> List[compat.SpecCase]:
         """Helper method to parse VNNLIB content and transform to reachability format."""
-        query = vnnlib.parse_query_string(vnnlib_content)
-        return vnnlib.compat.transform(query)
+        query = vnnlib.query.parse_query_string(vnnlib_content)
+        return compat.transform(query)
 
     def _assert_box_bounds(self, input_box: List[Tuple[float, float]], expected_bounds: List[Tuple[float, float]]):
         """Assert that input box matches expected bounds (with inf handling)."""
@@ -33,7 +33,7 @@ class TestCompatTransformer:
             else:
                 assert abs(actual_upper - expected_upper) < 1e-9, f"Upper bound mismatch for dimension {i}: expected {expected_upper}, got {actual_upper}"
 
-    def _assert_polytope_constraints(self, polytope: vnnlib.compat.Polytope, expected_constraints: List[Tuple[List[float], float]]):
+    def _assert_polytope_constraints(self, polytope: compat.Polytope, expected_constraints: List[Tuple[List[float], float]]):
         """Assert that polytope constraints match expected format."""
         assert len(polytope.coeff_matrix) == len(expected_constraints), f"Expected {len(expected_constraints)} constraints, got {len(polytope.coeff_matrix)}"
         assert len(polytope.rhs) == len(expected_constraints), f"RHS size mismatch"
@@ -51,8 +51,8 @@ class TestCompatTransformer:
         content = """
         (vnnlib-version <2.0>)
         (declare-network test
-            (declare-input X Real [2])
-            (declare-output Y Real [1])
+            (declare-input X real [2])
+            (declare-output Y real [1])
         )
         (assert (<= X[0] 1.0))
         (assert (>= X[0] 0.0))
@@ -67,8 +67,8 @@ class TestCompatTransformer:
         content = """
         (vnnlib-version <2.0>)
         (declare-network test
-            (declare-input X Real [2])
-            (declare-output Y Real [2])
+            (declare-input X real [2])
+            (declare-output Y real [2])
         )
         (assert (<= X[0] 1.0))
         (assert (>= X[0] 0.0))
@@ -95,8 +95,8 @@ class TestCompatTransformer:
         content = """
         (vnnlib-version <2.0>)
         (declare-network test
-            (declare-input X Real [1])
-            (declare-output Y Real [2])
+            (declare-input X real [1])
+            (declare-output Y real [2])
         )
         (assert (or (and (<= Y[0] 2.0) (<= Y[1] 3.0)) (<= Y[0] 1.0)))
         """
@@ -125,8 +125,8 @@ class TestCompatTransformer:
         content = """
         (vnnlib-version <2.0>)
         (declare-network test
-            (declare-input X Real [1])
-            (declare-output Y Real [2])
+            (declare-input X real [1])
+            (declare-output Y real [2])
         )
         (assert (or (and (<= Y[0] 1.0) (<= Y[1] 2.0)) 
                     (and (<= Y[0] 3.0) (<= Y[1] 4.0))))
@@ -156,8 +156,8 @@ class TestCompatTransformer:
         content = """
         (vnnlib-version <2.0>)
         (declare-network test
-            (declare-input X Real [3])
-            (declare-output Y Real [1])
+            (declare-input X real [3])
+            (declare-output Y real [1])
         )
         (assert (<= X[0] 5.0))
         (assert (>= X[0] -2.0))
@@ -182,8 +182,8 @@ class TestCompatTransformer:
         content = """
         (vnnlib-version <2.0>)
         (declare-network test
-            (declare-input X Real [1])
-            (declare-output Y Real [2])
+            (declare-input X real [1])
+            (declare-output Y real [2])
         )
         (assert (or (>= Y[0] -1.0) (>= Y[1] -2.0)))
         """
@@ -205,8 +205,8 @@ class TestCompatTransformer:
         content = """
         (vnnlib-version <2.0>)
         (declare-network test
-            (declare-input X Real [1])
-            (declare-output Y Real [2])
+            (declare-input X real [1])
+            (declare-output Y real [2])
         )
         (assert (or (<= Y[0] 1.0) (<= Y[1] 2.0)))
         (assert (or (<= Y[0] 3.0) (<= Y[1] 4.0)))
@@ -225,16 +225,16 @@ class TestCompatTransformer:
         content = """
         (vnnlib-version <2.0>)
         (declare-network net1
-            (declare-input X Real [1])
-            (declare-output Y Real [1])
+            (declare-input X real [1])
+            (declare-output Y real [1])
         )
         (declare-network net2
-            (declare-input Z Real [1])
-            (declare-output W Real [1])
+            (declare-input Z real [1])
+            (declare-output W real [1])
         )
         (assert (<= Y[0] 1.0))
         """
-        with pytest.raises(vnnlib.VNNLibException, match="Only single-network queries are supported"):
+        with pytest.raises(vnnlib.query.VNNLibException, match="Only single-network queries are supported"):
             self._parse_and_transform(content)
 
     def test_multiple_input_variables_error(self):
@@ -242,13 +242,13 @@ class TestCompatTransformer:
         content = """
         (vnnlib-version <2.0>)
         (declare-network test
-            (declare-input X Real [1])
-            (declare-input Z Real [1])
-            (declare-output Y Real [1])
+            (declare-input X real [1])
+            (declare-input Z real [1])
+            (declare-output Y real [1])
         )
         (assert (<= Y[0] 1.0))
         """
-        with pytest.raises(vnnlib.VNNLibException, match="Multiple input variables found"):
+        with pytest.raises(vnnlib.query.VNNLibException, match="Multiple input variables found"):
             self._parse_and_transform(content)
 
     def test_multiple_output_variables_error(self):
@@ -256,13 +256,13 @@ class TestCompatTransformer:
         content = """
         (vnnlib-version <2.0>)
         (declare-network test
-            (declare-input X Real [1])
-            (declare-output Y Real [1])
-            (declare-output Z Real [1])
+            (declare-input X real [1])
+            (declare-output Y real [1])
+            (declare-output Z real [1])
         )
         (assert (<= Y[0] 1.0))
         """
-        with pytest.raises(vnnlib.VNNLibException, match="Multiple output variables found"):
+        with pytest.raises(vnnlib.query.VNNLibException, match="Multiple output variables found"):
             self._parse_and_transform(content)
 
     def test_multi_dimensional_input(self):
@@ -271,8 +271,8 @@ class TestCompatTransformer:
         content = """
         (vnnlib-version <2.0>)
         (declare-network test
-            (declare-input X Real [4])
-            (declare-output Y Real [1])
+            (declare-input X real [4])
+            (declare-output Y real [1])
         )
         (assert (<= X[0] 1.0))
         (assert (>= X[3] -1.0))
@@ -300,8 +300,8 @@ class TestCompatTransformer:
         content = """
         (vnnlib-version <2.0>)
         (declare-network test
-            (declare-input X Real [2])
-            (declare-output Y Real [2])
+            (declare-input X real [2])
+            (declare-output Y real [2])
         )
         (assert (<= (* 2.0 X[0]) 10.0))
         (assert (or (<= (* 2.0 Y[0]) 6.0) (<= (+ Y[0] Y[1]) 9.0)))
@@ -333,8 +333,8 @@ class TestCompatTransformer:
         content = """
         (vnnlib-version <2.0>)
         (declare-network test
-            (declare-input X Real [1])
-            (declare-output Y Real [1])
+            (declare-input X real [1])
+            (declare-output Y real [1])
         )
         (assert (or (<= Y[0] 5.0)))
         """
@@ -352,14 +352,14 @@ class TestCompatTransformer:
         content = """
         (vnnlib-version <2.0>)
         (declare-network test
-            (declare-input X Real [1])
-            (declare-output Y Real [1])
+            (declare-input X real [1])
+            (declare-output Y real [1])
         )
         (assert (or (<= (+ X[0] Y[0]) 5.0)))
         """
         
         # Mixed input-output constraints should be rejected
-        with pytest.raises(vnnlib.VNNLibException) as excinfo:
+        with pytest.raises(vnnlib.query.VNNLibException) as excinfo:
             self._parse_and_transform(content)
         
         error_msg = str(excinfo.value)
@@ -371,8 +371,8 @@ class TestCompatTransformer:
         content = """
         (vnnlib-version <2.0>)
         (declare-network test
-            (declare-input X Real [1])
-            (declare-output Y Real [3])
+            (declare-input X real [1])
+            (declare-output Y real [3])
         )
         (assert (or (<= Y[0] 1.0) (<= Y[1] 2.0) (<= Y[2] 3.0) (>= Y[0] -1.0)))
         """

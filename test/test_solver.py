@@ -1,6 +1,6 @@
-import vnnlib
 import os
 import pytest
+from vnnlib.query import DType, VNNLibException
 from vnnlib.solver import Solver, VerificationResult
 
 
@@ -152,7 +152,7 @@ raw_stdout = "invalid"
 
     solver = Solver(get_test_solver())
 
-    with pytest.raises(vnnlib.VNNLibException):
+    with pytest.raises(VNNLibException):
         solver.verify(str(query), {})
 
 
@@ -187,14 +187,14 @@ crash = true
 
     solver = Solver(get_test_solver())
 
-    with pytest.raises(vnnlib.VNNLibException):
+    with pytest.raises(VNNLibException):
         solver.verify(str(query), {})
 
 
 def test_verify_rejects_missing_executable():
     solver = Solver("definitely-not-a-real-vnnlib-solver")
 
-    with pytest.raises(vnnlib.VNNLibException):
+    with pytest.raises(VNNLibException):
         solver.verify("query.vnnlib", {})
 
 
@@ -391,10 +391,10 @@ def test_supports_version_ranges(tmp_path, monkeypatch, method, expected):
         (
             "supports_onnx_element_types",
             [
-                vnnlib.DType.Real,
-                vnnlib.DType.F32,
-                vnnlib.DType.F64,
-                vnnlib.DType.I32,
+                DType.Real,
+                DType.F32,
+                DType.F64,
+                DType.I32,
             ],
         ),
         ("supports_hidden_node_theories", ["NH"]),
@@ -426,7 +426,7 @@ def test_supports_booleans(tmp_path, monkeypatch, method, expected):
 def test_supports_rejects_missing_executable():
     solver = Solver("definitely-not-a-real-vnnlib-solver")
 
-    with pytest.raises(vnnlib.VNNLibException):
+    with pytest.raises(VNNLibException):
         solver.supports_onnx_opset_versions()
 
 
@@ -437,7 +437,7 @@ def test_supports_operators(tmp_path, monkeypatch):
 
     assert [operator.name for operator in operators] == ["Gemm", "Relu"]
     assert [operator.element_types for operator in operators] == [
-        [vnnlib.DType.F32, vnnlib.DType.F64],
+        [DType.F32, DType.F64],
         [],
     ]
 
@@ -484,7 +484,7 @@ raw_stdout = "13"
 """,
     )
 
-    with pytest.raises(vnnlib.VNNLibException):
+    with pytest.raises(VNNLibException):
         solver.supports_onnx_opset_versions()
 
 
@@ -498,5 +498,5 @@ crash = true
 """,
     )
 
-    with pytest.raises(vnnlib.VNNLibException):
+    with pytest.raises(VNNLibException):
         solver.supports_onnx_opset_versions()

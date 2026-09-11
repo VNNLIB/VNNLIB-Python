@@ -12,9 +12,9 @@ from pathlib import Path
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), 'parsers', 'python'))
 
 try:
-    import vnnlib
+    import vnnlib.query
 except ImportError:
-    print("Error: Could not import vnnlib. Make sure the parser is built and installed.")
+    print("Error: Could not import vnnlib.query. Make sure the parser is built and installed.")
     sys.exit(1)
 
 def benchmark_parse(file_path, iterations=1):
@@ -36,7 +36,7 @@ def benchmark_parse(file_path, iterations=1):
         start_time = time.perf_counter()
         
         try:
-            query = vnnlib.parse_query_file(file_path)
+            query = vnnlib.query.parse_query_file(file_path)
             end_time = time.perf_counter()
             
             parse_time = end_time - start_time

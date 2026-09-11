@@ -1,3 +1,7 @@
+# Unreleased (up to 2026-09-07)
+
+* Added `vnnlib.query` as the new public namespace for the Python Query API. Existing root-level Query API names remain available for backwards compatibility and emit `DeprecationWarning`.
+
 # Version 1.1
 
 * Added support for VNNLIB 2.1:
