@@ -45,4 +45,46 @@ jobs:
       run: pytest -v
         
 
-    
+
+  solver-integration:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+      with:
+        submodules: recursive
+
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.11'
+
+    - name: Install system dependencies
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y build-essential flex bison cabal-install
+
+    - name: Install Python dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install scikit-build cmake ninja pybind11 pytest
+
+    - name: Install BNFC and Haskell dependencies
+      run: |
+        cabal update
+        cabal install alex happy BNFC
+        echo "$HOME/.cabal/bin" >> $GITHUB_PATH
+
+    - name: Build the project
+      run: pip install -e .
+
+    - name: Install test solver
+      run: |
+        python -m venv "$RUNNER_TEMP/vnnlib-test-solver"
+        "$RUNNER_TEMP/vnnlib-test-solver/bin/pip" install "git+https://github.com/VNNLIB/VNNLIB-Test-Solver.git@15c2a8d554e221ecec905672485858fc6f29eb00"
+
+    - name: Run Solver integration tests
+      env:
+        VNNLIB_TEST_SOLVER: ${{ runner.temp }}/vnnlib-test-solver/bin/vnnlib-test-solver
+      run: pytest -v test/test_solver.py

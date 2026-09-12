@@ -13,6 +13,7 @@
 #include "DNFConverter.h"
 #include "CompatTransformer.h"
 #include "Error.hpp"
+#include "Solver.h"
 
 namespace py = pybind11;
 
@@ -42,6 +43,50 @@ PYBIND11_MODULE(_core, m) {
 		.value("Hidden", SymbolKind::Hidden)
 		.value("Output", SymbolKind::Output)
 		.value("Unknown", SymbolKind::Unknown);
+
+
+	py::enum_<vnnlib::solver::VerificationResult>(m, "VerificationResult")
+	.value("Sat", vnnlib::solver::VerificationResult::Sat)
+	.value("Unsat", vnnlib::solver::VerificationResult::Unsat)
+	.value("Unknown", vnnlib::solver::VerificationResult::Unknown)
+	.value("TimedOut", vnnlib::solver::VerificationResult::TimedOut);
+
+
+        py::class_<vnnlib::solver::SemanticVersion>(m, "SemanticVersion")
+                .def_property_readonly("major", [](const vnnlib::solver::SemanticVersion& version){ return version.major; })
+                .def_property_readonly("minor", [](const vnnlib::solver::SemanticVersion& version){ return version.minor; })
+                .def_property_readonly("patch", [](const vnnlib::solver::SemanticVersion& version){ return version.patch; })
+                .def_property_readonly("extra", [](const vnnlib::solver::SemanticVersion& version){ return version.extra; });
+
+        py::class_<vnnlib::solver::VersionRange>(m, "VersionRange")
+                .def_property_readonly("minimum", [](const vnnlib::solver::VersionRange& range){ return range.minimum; })
+                .def_property_readonly("maximum", [](const vnnlib::solver::VersionRange& range){ return range.maximum; });
+
+        py::class_<vnnlib::solver::OpsetRange>(m, "OpsetRange")
+                .def_property_readonly("minimum", [](const vnnlib::solver::OpsetRange& range){ return range.minimum; })
+                .def_property_readonly("maximum", [](const vnnlib::solver::OpsetRange& range){ return range.maximum; });
+
+        py::class_<vnnlib::solver::OperatorSupport>(m, "OperatorSupport")
+                .def_property_readonly("name", [](const vnnlib::solver::OperatorSupport& support){ return support.name; })
+                .def_property_readonly("element_types", [](const vnnlib::solver::OperatorSupport& support){ return support.elementTypes; });
+
+        py::class_<vnnlib::solver::Solver>(m, "Solver")
+                .def(py::init<const std::string&>(), py::arg("executable"))
+                .def("verify", &vnnlib::solver::Solver::verify,
+                        py::arg("query"),
+                        py::arg("networks"),
+                        py::arg("timeout") = std::nullopt)
+                .def("supports_onnx_opset_versions", &vnnlib::solver::Solver::supportsOnnxOpsetVersions)
+                .def("supports_onnx_element_types", &vnnlib::solver::Solver::supportsOnnxElementTypes)
+                .def("supports_onnx_operators", &vnnlib::solver::Solver::supportsOnnxOperators)
+                .def("supports_vnnlib_versions", &vnnlib::solver::Solver::supportsVNNLibVersions)
+                .def("supports_hidden_node_theories", &vnnlib::solver::Solver::supportsHiddenNodeTheories)
+                .def("supports_multiple_input_output_theories", &vnnlib::solver::Solver::supportsMultipleInputOutputTheories)
+                .def("supports_multiple_network_theories", &vnnlib::solver::Solver::supportsMultipleNetworkTheories)
+                .def("supports_multiple_node_comparison_theories", &vnnlib::solver::Solver::supportsMultipleNodeComparisonTheories)
+                .def("supports_arithmetic_complexity_theories", &vnnlib::solver::Solver::supportsArithmeticComplexityTheories)
+                .def("supports_optimised_disjunctive_reasoning", &vnnlib::solver::Solver::supportsOptimisedDisjunctiveReasoning)
+                .def("supports_serialise_assignments", &vnnlib::solver::Solver::supportsSerialiseAssignments);
 
 	py::class_<TNode>(m, "Node")
 		.def("__str__", [](const TNode& n){ return n.toString(); })
