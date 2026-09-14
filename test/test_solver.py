@@ -87,7 +87,7 @@ stderr = "solver warning"
     assert solver.verify(str(query), {}) == VerificationResult.Sat
 
 
-def test_verify_allows_nonzero_exit(tmp_path, monkeypatch):
+def test_verify_rejects_nonzero_exit(tmp_path, monkeypatch):
     query = tmp_path / "query.vnnlib"
     query.write_text(
         """
@@ -118,7 +118,8 @@ exit_code = 7
 
     solver = Solver(get_test_solver())
 
-    assert solver.verify(str(query), {}) == VerificationResult.Sat
+    with pytest.raises(VNNLibException):
+        solver.verify(str(query), {})
 
 
 def test_verify_rejects_malformed_output(tmp_path, monkeypatch):
@@ -458,7 +459,7 @@ stderr = "solver warning"
     assert result.maximum == 21
 
 
-def test_supports_allows_nonzero_exit(tmp_path, monkeypatch):
+def test_supports_rejects_nonzero_exit(tmp_path, monkeypatch):
     solver = get_supports_solver(
         tmp_path,
         monkeypatch,
@@ -468,10 +469,8 @@ exit_code = 7
 """,
     )
 
-    result = solver.supports_onnx_opset_versions()
-
-    assert result.minimum == 13
-    assert result.maximum == 21
+    with pytest.raises(VNNLibException):
+        solver.supports_onnx_opset_versions()
 
 
 def test_supports_rejects_malformed_output(tmp_path, monkeypatch):
