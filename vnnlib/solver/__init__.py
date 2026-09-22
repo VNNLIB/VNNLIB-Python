@@ -1,6 +1,11 @@
 from .._core import (
     Solver,
     VerificationResult,
+    HiddenNodeTheory,
+    MultipleInputOutputTheory,
+    MultipleNetworkTheory,
+    MultipleNodeComparisonTheory,
+    ArithmeticComplexityTheory,
     SemanticVersion,
     VersionRange,
     OpsetRange,
@@ -10,6 +15,11 @@ from .._core import (
 __all__ = [
     "Solver",
     "VerificationResult",
+    "HiddenNodeTheory",
+    "MultipleInputOutputTheory",
+    "MultipleNetworkTheory",
+    "MultipleNodeComparisonTheory",
+    "ArithmeticComplexityTheory",
     "SemanticVersion",
     "VersionRange",
     "OpsetRange",

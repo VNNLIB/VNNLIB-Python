@@ -52,6 +52,31 @@ PYBIND11_MODULE(_core, m) {
 	.value("TimedOut", vnnlib::solver::VerificationResult::TimedOut);
 
 
+        py::enum_<vnnlib::solver::HiddenNodeTheory>(m, "HiddenNodeTheory")
+                .value("NH", vnnlib::solver::HiddenNodeTheory::NH)
+                .value("H", vnnlib::solver::HiddenNodeTheory::H);
+
+        py::enum_<vnnlib::solver::MultipleInputOutputTheory>(m, "MultipleInputOutputTheory")
+                .value("SIO", vnnlib::solver::MultipleInputOutputTheory::SIO)
+                .value("MIO", vnnlib::solver::MultipleInputOutputTheory::MIO);
+
+        py::enum_<vnnlib::solver::MultipleNetworkTheory>(m, "MultipleNetworkTheory")
+                .value("SNET", vnnlib::solver::MultipleNetworkTheory::SNET)
+                .value("MENET", vnnlib::solver::MultipleNetworkTheory::MENET)
+                .value("MINET", vnnlib::solver::MultipleNetworkTheory::MINET)
+                .value("MNET", vnnlib::solver::MultipleNetworkTheory::MNET);
+
+        py::enum_<vnnlib::solver::MultipleNodeComparisonTheory>(m, "MultipleNodeComparisonTheory")
+                .value("SNC", vnnlib::solver::MultipleNodeComparisonTheory::SNC)
+                .value("MNC", vnnlib::solver::MultipleNodeComparisonTheory::MNC);
+
+        py::enum_<vnnlib::solver::ArithmeticComplexityTheory>(m, "ArithmeticComplexityTheory")
+                .value("BND", vnnlib::solver::ArithmeticComplexityTheory::BND)
+                .value("OUTC", vnnlib::solver::ArithmeticComplexityTheory::OUTC)
+                .value("LIN", vnnlib::solver::ArithmeticComplexityTheory::LIN)
+                .value("POLY", vnnlib::solver::ArithmeticComplexityTheory::POLY);
+
+
         py::class_<vnnlib::solver::SemanticVersion>(m, "SemanticVersion")
                 .def_property_readonly("major", [](const vnnlib::solver::SemanticVersion& version){ return version.major; })
                 .def_property_readonly("minor", [](const vnnlib::solver::SemanticVersion& version){ return version.minor; })

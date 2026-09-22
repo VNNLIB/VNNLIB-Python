@@ -1,7 +1,15 @@
 import os
 import pytest
 from vnnlib.query import DType, VNNLibException
-from vnnlib.solver import Solver, VerificationResult
+from vnnlib.solver import (
+    Solver,
+    VerificationResult,
+    HiddenNodeTheory,
+    MultipleInputOutputTheory,
+    MultipleNetworkTheory,
+    MultipleNodeComparisonTheory,
+    ArithmeticComplexityTheory,
+)
 
 
 def get_test_solver():
@@ -398,11 +406,14 @@ def test_supports_version_ranges(tmp_path, monkeypatch, method, expected):
                 DType.I32,
             ],
         ),
-        ("supports_hidden_node_theories", ["NH"]),
-        ("supports_multiple_input_output_theories", ["SIO"]),
-        ("supports_multiple_network_theories", ["SNET"]),
-        ("supports_multiple_node_comparison_theories", ["SNC"]),
-        ("supports_arithmetic_complexity_theories", ["BND", "LIN"]),
+        ("supports_hidden_node_theories", [HiddenNodeTheory.NH]),
+        ("supports_multiple_input_output_theories", [MultipleInputOutputTheory.SIO]),
+        ("supports_multiple_network_theories", [MultipleNetworkTheory.SNET]),
+        ("supports_multiple_node_comparison_theories", [MultipleNodeComparisonTheory.SNC]),
+        (
+            "supports_arithmetic_complexity_theories",
+            [ArithmeticComplexityTheory.BND, ArithmeticComplexityTheory.LIN],
+        ),
     ],
 )
 def test_supports_lists(tmp_path, monkeypatch, method, expected):
