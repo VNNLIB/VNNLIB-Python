@@ -7,3 +7,5 @@ dist/
 *.egg-info/
 *.so
 wheelhouse/
+
+*.pyi
