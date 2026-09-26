@@ -82,9 +82,9 @@ jobs:
     - name: Install test solver
       run: |
         python -m venv "$RUNNER_TEMP/vnnlib-test-solver"
-        "$RUNNER_TEMP/vnnlib-test-solver/bin/pip" install "git+https://github.com/VNNLIB/VNNLIB-Test-Solver.git@15c2a8d554e221ecec905672485858fc6f29eb00"
+        "$RUNNER_TEMP/vnnlib-test-solver/bin/pip" install "vnnlib-test-solver==2.0.0"
 
     - name: Run Solver integration tests
       env:
-        VNNLIB_TEST_SOLVER: ${{ runner.temp }}/vnnlib-test-solver/bin/vnnlib-test-solver
+        VNNLIB_TEST_SOLVER: ${{ runner.temp }}/vnnlib-test-solver/bin/vnnlibTestSolver
       run: pytest -v test/test_solver.py
