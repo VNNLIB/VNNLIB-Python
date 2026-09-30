@@ -271,6 +271,23 @@ PYBIND11_MODULE(_core, m) {
 	py::return_value_policy::move,
 	py::arg("content"));
 
+	m.def("hidden_node_theory", [](const TQuery& query) {
+		for (const auto& network : query.networks) {
+			// A declaration counts even when assertions do not use the hidden node.
+			if (network && !network->hidden.empty()) return "H";
+		}
+		return "NH";
+	}, py::arg("query"), "Compute the least permissive hidden-node theory on demand: NH or H.");
+
+	m.def("input_output_theory", [](const TQuery& query) {
+		for (const auto& network : query.networks) {
+			// Count declared nodes, not the elements of their tensors.
+			if (network && (network->inputs.size() > 1 || network->outputs.size() > 1))
+				return "MIO";
+		}
+		return "SIO";
+	}, py::arg("query"), "Compute the least permissive input/output theory on demand: SIO or MIO.");
+
 	m.def("transform_to_compat", [](const TQuery& query) {
 		CompatTransformer transformer(&query);
 		const auto& cases = transformer.transform();

@@ -4,6 +4,8 @@ from .._core import (
     # Parsing
     parse_query_file,
     parse_query_string,
+    hidden_node_theory,
+    input_output_theory,
 
     # Core AST nodes
     Query,
@@ -51,6 +53,8 @@ from .._core import (
 )
 
 __all__ = [
+    "hidden_node_theory",
+    "input_output_theory",
     "parse_query_file",
     "parse_query_string",
 
