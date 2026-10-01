@@ -38,7 +38,7 @@ jobs:
           CIBW_ARCHS_MACOS: "x86_64 arm64"
           CIBW_ENVIRONMENT_MACOS: MACOSX_DEPLOYMENT_TARGET=10.15
           CIBW_TEST_COMMAND: "pytest -v {project}/test"
-          CIBW_TEST_REQUIRES: pytest
+          CIBW_TEST_REQUIRES: pytest mypy
 
       - name: Upload wheels
         uses: actions/upload-artifact@v4
