@@ -8,6 +8,8 @@ from .._core import (
     input_output_theory,
     multiple_networks_theory,
     multiple_node_comparisons_theory,
+    arithmetic_complexity_theory,
+    element_type_theories,
 
     # Core AST nodes
     Query,
@@ -61,6 +63,8 @@ __all__ = [
     "input_output_theory",
     "multiple_networks_theory",
     "multiple_node_comparisons_theory",
+    "arithmetic_complexity_theory",
+    "element_type_theories",
 
     "Query",
     "Network",

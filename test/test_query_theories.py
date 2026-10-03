@@ -241,3 +241,78 @@ class TestQueryTheories:
         assert query.input_output_theory(parsed_query) == "MIO"
         assert query.multiple_networks_theory(parsed_query) == "SNET"
         assert query.multiple_node_comparisons_theory(parsed_query) == "SNC"
+
+
+class TestArithmeticComplexityTheory:
+    """Section 4.1.5 examples: BND, OUTC, LIN and POLY."""
+
+    NETWORK = """
+    (vnnlib-version <2.0>)
+    (declare-network test
+        (declare-input X real [2])
+        (declare-output Y real [2])
+    )
+    """
+
+    def classify(self, assertions):
+        parsed_query = query.parse_query_string(self.NETWORK + assertions)
+        return query.arithmetic_complexity_theory(parsed_query)
+
+    def test_bounds_only(self):
+        """Single variables against constants is BND."""
+        assert self.classify("(assert (<= X[0] 1.0)) (assert (>= Y[0] 0.5))") == "BND"
+
+    def test_output_comparison(self):
+        """Two output variables compared directly is OUTC."""
+        assert self.classify("(assert (<= X[0] 1.0)) (assert (>= Y[0] Y[1]))") == "OUTC"
+
+    def test_linear_expression(self):
+        """A linear expression over inputs is LIN."""
+        assert self.classify(
+            "(assert (<= (+ (* 0.5 X[0]) (* 0.75 X[1])) 1.0)) (assert (>= (+ Y[0] Y[1]) 0.5))"
+        ) == "LIN"
+
+    def test_polynomial_expression(self):
+        """A product of two variables is POLY."""
+        assert self.classify(
+            "(assert (<= (* X[0] X[1]) 1.0)) (assert (>= (+ Y[0] Y[1]) 0.5))"
+        ) == "POLY"
+
+    def test_highest_level_wins(self):
+        """One polynomial assertion makes the whole query POLY."""
+        assert self.classify("(assert (<= X[0] 1.0)) (assert (<= (* X[0] X[1]) 1.0))") == "POLY"
+
+    def test_exported_from_query_namespace(self):
+        assert query.arithmetic_complexity_theory is _core.arithmetic_complexity_theory
+
+
+class TestElementTypeTheories:
+    """Section 4.1.6: one theory per declared element type."""
+
+    def test_single_element_type(self):
+        content = """
+        (vnnlib-version <2.0>)
+        (declare-network test
+            (declare-input X real [2])
+            (declare-output Y real [1])
+        )
+        (assert (<= X[0] 1.0))
+        """
+        parsed_query = query.parse_query_string(content)
+        assert query.element_type_theories(parsed_query) == ["Real"]
+
+    def test_mixed_element_types(self):
+        """A query can belong to more than one element type theory."""
+        content = """
+        (vnnlib-version <2.0>)
+        (declare-network a
+            (declare-input X float16 [2])
+            (declare-output Y float32 [1])
+        )
+        (assert (<= X[0] 1.0))
+        """
+        parsed_query = query.parse_query_string(content)
+        assert query.element_type_theories(parsed_query) == ["F16", "F32"]
+
+    def test_exported_from_query_namespace(self):
+        assert query.element_type_theories is _core.element_type_theories

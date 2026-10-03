@@ -296,6 +296,14 @@ PYBIND11_MODULE(_core, m) {
 		return multipleNodeComparisonsTheory(query);
 	}, py::arg("query"));
 
+	m.def("arithmetic_complexity_theory", [](const TQuery& query) {
+		return arithmeticComplexityTheory(query);
+	}, py::arg("query"), "Compute the arithmetic complexity theory of a query: BND, OUTC, LIN or POLY.");
+
+	m.def("element_type_theories", [](const TQuery& query) {
+		return elementTypeTheories(query);
+	}, py::arg("query"), "List the element type theories a query belongs to, one entry per declared element type.");
+
 	m.def("transform_to_compat", [](const TQuery& query) {
 		CompatTransformer transformer(&query);
 		const auto& cases = transformer.transform();
