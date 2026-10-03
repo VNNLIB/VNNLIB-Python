@@ -6,6 +6,8 @@ from .._core import (
     parse_query_string,
     hidden_node_theory,
     input_output_theory,
+    multiple_networks_theory,
+    multiple_node_comparisons_theory,
 
     # Core AST nodes
     Query,
@@ -53,10 +55,12 @@ from .._core import (
 )
 
 __all__ = [
-    "hidden_node_theory",
-    "input_output_theory",
     "parse_query_file",
     "parse_query_string",
+    "hidden_node_theory",
+    "input_output_theory",
+    "multiple_networks_theory",
+    "multiple_node_comparisons_theory",
 
     "Query",
     "Network",

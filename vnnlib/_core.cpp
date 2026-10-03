@@ -288,6 +288,14 @@ PYBIND11_MODULE(_core, m) {
 		return "SIO";
 	}, py::arg("query"), "Compute the least permissive input/output theory on demand: SIO or MIO.");
 
+	m.def("multiple_networks_theory", [](const TQuery& query) {
+		return multipleNetworksTheory(query);
+	}, py::arg("query"));
+
+	m.def("multiple_node_comparisons_theory", [](const TQuery& query) {
+		return multipleNodeComparisonsTheory(query);
+	}, py::arg("query"));
+
 	m.def("transform_to_compat", [](const TQuery& query) {
 		CompatTransformer transformer(&query);
 		const auto& cases = transformer.transform();
