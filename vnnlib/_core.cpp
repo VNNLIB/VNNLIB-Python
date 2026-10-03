@@ -272,33 +272,24 @@ PYBIND11_MODULE(_core, m) {
 	py::arg("content"));
 
 	m.def("hidden_node_theory", [](const TQuery& query) {
-		for (const auto& network : query.networks) {
-			// A declaration counts even when assertions do not use the hidden node.
-			if (network && !network->hidden.empty()) return "H";
-		}
-		return "NH";
+		return hiddenNodeTheory(query);
 	}, py::arg("query"), "Compute the least permissive hidden-node theory on demand: NH or H.");
 
 	m.def("input_output_theory", [](const TQuery& query) {
-		for (const auto& network : query.networks) {
-			// Count declared nodes, not the elements of their tensors.
-			if (network && (network->inputs.size() > 1 || network->outputs.size() > 1))
-				return "MIO";
-		}
-		return "SIO";
+		return inputOutputTheory(query);
 	}, py::arg("query"), "Compute the least permissive input/output theory on demand: SIO or MIO.");
 
 	m.def("multiple_networks_theory", [](const TQuery& query) {
 		return multipleNetworksTheory(query);
-	}, py::arg("query"));
+	}, py::arg("query"), "Compute the network theory a query belongs to: SNET, MNET, MINET, or MENET.");
 
 	m.def("multiple_node_comparisons_theory", [](const TQuery& query) {
 		return multipleNodeComparisonsTheory(query);
-	}, py::arg("query"));
+	}, py::arg("query"), "Compute the node comparisons theory a query belongs to: SNC or MNC.");
 
 	m.def("arithmetic_complexity_theory", [](const TQuery& query) {
 		return arithmeticComplexityTheory(query);
-	}, py::arg("query"), "Compute the arithmetic complexity theory of a query: BND, OUTC, LIN or POLY.");
+	}, py::arg("query"), "Compute the arithmetic complexity theory of a query: BND, OUTC, LIN, or POLY.");
 
 	m.def("element_type_theories", [](const TQuery& query) {
 		return elementTypeTheories(query);
