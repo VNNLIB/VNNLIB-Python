@@ -2,6 +2,14 @@
 
 import vnnlib.query as query
 from vnnlib import _core
+from vnnlib.query import (
+    DType,
+    HiddenNodeTheory as HN,
+    InputOutputTheory as IO,
+    MultipleNetworksTheory as MN,
+    MultipleNodeComparisonsTheory as NC,
+    ArithmeticComplexityTheory as AC,
+)
 
 
 class TestQueryTheories:
@@ -19,12 +27,12 @@ class TestQueryTheories:
 
         parsed_query = query.parse_query_string(content)
 
-        assert query.hidden_node_theory(parsed_query) == "NH"
-        assert query.input_output_theory(parsed_query) == "SIO"
-        assert query.multiple_networks_theory(parsed_query) == "SNET"
-        assert query.multiple_node_comparisons_theory(parsed_query) == "SNC"
-        assert query.arithmetic_complexity_theory(parsed_query) == "BND"
-        assert query.element_type_theories(parsed_query) == ["Real"]
+        assert parsed_query.hidden_node_theory() == [HN.NH, HN.H]
+        assert parsed_query.input_output_theory() == [IO.SIO, IO.MIO]
+        assert parsed_query.multiple_networks_theory() == [MN.SNET, MN.MNET]
+        assert parsed_query.multiple_node_comparisons_theory() == [NC.SNC, NC.MNC]
+        assert parsed_query.arithmetic_complexity_theory() == [AC.BND, AC.OUTC, AC.LIN, AC.POLY]
+        assert parsed_query.element_type_theories() == [DType.Real]
 
     def test_hidden_node_declaration(self):
         """A hidden declaration belongs to H even without an assertion reference."""
@@ -40,12 +48,12 @@ class TestQueryTheories:
 
         parsed_query = query.parse_query_string(content)
 
-        assert query.hidden_node_theory(parsed_query) == "H"
-        assert query.input_output_theory(parsed_query) == "SIO"
-        assert query.multiple_networks_theory(parsed_query) == "SNET"
-        assert query.multiple_node_comparisons_theory(parsed_query) == "SNC"
-        assert query.arithmetic_complexity_theory(parsed_query) == "BND"
-        assert query.element_type_theories(parsed_query) == ["Real"]
+        assert parsed_query.hidden_node_theory() == [HN.H]
+        assert parsed_query.input_output_theory() == [IO.SIO, IO.MIO]
+        assert parsed_query.multiple_networks_theory() == [MN.SNET, MN.MNET]
+        assert parsed_query.multiple_node_comparisons_theory() == [NC.SNC, NC.MNC]
+        assert parsed_query.arithmetic_complexity_theory() == [AC.BND, AC.OUTC, AC.LIN, AC.POLY]
+        assert parsed_query.element_type_theories() == [DType.Real]
 
     def test_multiple_input_declarations(self):
         """Multiple input declarations in one network belong to MIO."""
@@ -61,12 +69,12 @@ class TestQueryTheories:
 
         parsed_query = query.parse_query_string(content)
 
-        assert query.hidden_node_theory(parsed_query) == "NH"
-        assert query.input_output_theory(parsed_query) == "MIO"
-        assert query.multiple_networks_theory(parsed_query) == "SNET"
-        assert query.multiple_node_comparisons_theory(parsed_query) == "SNC"
-        assert query.arithmetic_complexity_theory(parsed_query) == "BND"
-        assert query.element_type_theories(parsed_query) == ["Real"]
+        assert parsed_query.hidden_node_theory() == [HN.NH, HN.H]
+        assert parsed_query.input_output_theory() == [IO.MIO]
+        assert parsed_query.multiple_networks_theory() == [MN.SNET, MN.MNET]
+        assert parsed_query.multiple_node_comparisons_theory() == [NC.SNC, NC.MNC]
+        assert parsed_query.arithmetic_complexity_theory() == [AC.BND, AC.OUTC, AC.LIN, AC.POLY]
+        assert parsed_query.element_type_theories() == [DType.Real]
 
     def test_multiple_output_declarations(self):
         """Multiple output declarations in one network belong to MIO."""
@@ -82,12 +90,12 @@ class TestQueryTheories:
 
         parsed_query = query.parse_query_string(content)
 
-        assert query.hidden_node_theory(parsed_query) == "NH"
-        assert query.input_output_theory(parsed_query) == "MIO"
-        assert query.multiple_networks_theory(parsed_query) == "SNET"
-        assert query.multiple_node_comparisons_theory(parsed_query) == "SNC"
-        assert query.arithmetic_complexity_theory(parsed_query) == "BND"
-        assert query.element_type_theories(parsed_query) == ["Real"]
+        assert parsed_query.hidden_node_theory() == [HN.NH, HN.H]
+        assert parsed_query.input_output_theory() == [IO.MIO]
+        assert parsed_query.multiple_networks_theory() == [MN.SNET, MN.MNET]
+        assert parsed_query.multiple_node_comparisons_theory() == [NC.SNC, NC.MNC]
+        assert parsed_query.arithmetic_complexity_theory() == [AC.BND, AC.OUTC, AC.LIN, AC.POLY]
+        assert parsed_query.element_type_theories() == [DType.Real]
 
     def test_snet_network(self):
         """A query with a single network declaration belong to SNET."""
@@ -102,12 +110,12 @@ class TestQueryTheories:
 
         parsed_query = query.parse_query_string(content)
 
-        assert query.hidden_node_theory(parsed_query) == "NH"
-        assert query.input_output_theory(parsed_query) == "SIO"
-        assert query.multiple_networks_theory(parsed_query) == "SNET"
-        assert query.multiple_node_comparisons_theory(parsed_query) == "SNC"
-        assert query.arithmetic_complexity_theory(parsed_query) == "BND"
-        assert query.element_type_theories(parsed_query) == ["F32"]
+        assert parsed_query.hidden_node_theory() == [HN.NH, HN.H]
+        assert parsed_query.input_output_theory() == [IO.SIO, IO.MIO]
+        assert parsed_query.multiple_networks_theory() == [MN.SNET, MN.MNET]
+        assert parsed_query.multiple_node_comparisons_theory() == [NC.SNC, NC.MNC]
+        assert parsed_query.arithmetic_complexity_theory() == [AC.BND, AC.OUTC, AC.LIN, AC.POLY]
+        assert parsed_query.element_type_theories() == [DType.F32]
 
     def test_mnet_networks(self):
         """A query with an arbitrary number of network declarations belong to MNET."""
@@ -126,12 +134,12 @@ class TestQueryTheories:
 
         parsed_query = query.parse_query_string(content)
 
-        assert query.hidden_node_theory(parsed_query) == "NH"
-        assert query.input_output_theory(parsed_query) == "SIO"
-        assert query.multiple_networks_theory(parsed_query) == "MNET"
-        assert query.multiple_node_comparisons_theory(parsed_query) == "SNC"
-        assert query.arithmetic_complexity_theory(parsed_query) == "BND"
-        assert query.element_type_theories(parsed_query) == ["F32"]
+        assert parsed_query.hidden_node_theory() == [HN.NH, HN.H]
+        assert parsed_query.input_output_theory() == [IO.SIO, IO.MIO]
+        assert parsed_query.multiple_networks_theory() == [MN.MNET]
+        assert parsed_query.multiple_node_comparisons_theory() == [NC.SNC, NC.MNC]
+        assert parsed_query.arithmetic_complexity_theory() == [AC.BND, AC.OUTC, AC.LIN, AC.POLY]
+        assert parsed_query.element_type_theories() == [DType.F32]
 
     def test_minet_networks(self):
         """A query with multiple network declarations where all but one contains either an isomorphic-to or equal-to declaration belong to MINET."""
@@ -151,12 +159,12 @@ class TestQueryTheories:
 
         parsed_query = query.parse_query_string(content)
 
-        assert query.hidden_node_theory(parsed_query) == "NH"
-        assert query.input_output_theory(parsed_query) == "SIO"
-        assert query.multiple_networks_theory(parsed_query) == "MINET"
-        assert query.multiple_node_comparisons_theory(parsed_query) == "SNC"
-        assert query.arithmetic_complexity_theory(parsed_query) == "BND"
-        assert query.element_type_theories(parsed_query) == ["F32"]
+        assert parsed_query.hidden_node_theory() == [HN.NH, HN.H]
+        assert parsed_query.input_output_theory() == [IO.SIO, IO.MIO]
+        assert parsed_query.multiple_networks_theory() == [MN.MINET, MN.MNET]
+        assert parsed_query.multiple_node_comparisons_theory() == [NC.SNC, NC.MNC]
+        assert parsed_query.arithmetic_complexity_theory() == [AC.BND, AC.OUTC, AC.LIN, AC.POLY]
+        assert parsed_query.element_type_theories() == [DType.F32]
 
     def test_menet_networks(self):
         """A query with multiple network declarations where all but one contain an equal-to declaration belong to MENET."""
@@ -176,12 +184,12 @@ class TestQueryTheories:
 
         parsed_query = query.parse_query_string(content)
 
-        assert query.hidden_node_theory(parsed_query) == "NH"
-        assert query.input_output_theory(parsed_query) == "SIO"
-        assert query.multiple_networks_theory(parsed_query) == "MENET"
-        assert query.multiple_node_comparisons_theory(parsed_query) == "SNC"
-        assert query.arithmetic_complexity_theory(parsed_query) == "BND"
-        assert query.element_type_theories(parsed_query) == ["F32"]
+        assert parsed_query.hidden_node_theory() == [HN.NH, HN.H]
+        assert parsed_query.input_output_theory() == [IO.SIO, IO.MIO]
+        assert parsed_query.multiple_networks_theory() == [MN.MENET, MN.MINET, MN.MNET]
+        assert parsed_query.multiple_node_comparisons_theory() == [NC.SNC, NC.MNC]
+        assert parsed_query.arithmetic_complexity_theory() == [AC.BND, AC.OUTC, AC.LIN, AC.POLY]
+        assert parsed_query.element_type_theories() == [DType.F32]
 
     def test_single_node_comparison(self):
         """A query with comparisons that do not reference variables from different nodes of the same network belong to SNC."""
@@ -204,12 +212,12 @@ class TestQueryTheories:
 
         parsed_query = query.parse_query_string(content)
 
-        assert query.hidden_node_theory(parsed_query) == "H"
-        assert query.input_output_theory(parsed_query) == "SIO"
-        assert query.multiple_networks_theory(parsed_query) == "MNET"
-        assert query.multiple_node_comparisons_theory(parsed_query) == "SNC"
-        assert query.arithmetic_complexity_theory(parsed_query) == "LIN"
-        assert query.element_type_theories(parsed_query) == ["F32"]
+        assert parsed_query.hidden_node_theory() == [HN.H]
+        assert parsed_query.input_output_theory() == [IO.SIO, IO.MIO]
+        assert parsed_query.multiple_networks_theory() == [MN.MNET]
+        assert parsed_query.multiple_node_comparisons_theory() == [NC.SNC, NC.MNC]
+        assert parsed_query.arithmetic_complexity_theory() == [AC.LIN, AC.POLY]
+        assert parsed_query.element_type_theories() == [DType.F32]
 
     def test_multiple_node_comparisons(self):
         """A query with comparisons that reference variables from different nodes of the same network belong to MNC."""
@@ -231,21 +239,21 @@ class TestQueryTheories:
 
         parsed_query = query.parse_query_string(content)
 
-        assert query.hidden_node_theory(parsed_query) == "H"
-        assert query.input_output_theory(parsed_query) == "SIO"
-        assert query.multiple_networks_theory(parsed_query) == "MNET"
-        assert query.multiple_node_comparisons_theory(parsed_query) == "MNC"
-        assert query.arithmetic_complexity_theory(parsed_query) == "LIN"
-        assert query.element_type_theories(parsed_query) == ["F32"]
+        assert parsed_query.hidden_node_theory() == [HN.H]
+        assert parsed_query.input_output_theory() == [IO.SIO, IO.MIO]
+        assert parsed_query.multiple_networks_theory() == [MN.MNET]
+        assert parsed_query.multiple_node_comparisons_theory() == [NC.MNC]
+        assert parsed_query.arithmetic_complexity_theory() == [AC.LIN, AC.POLY]
+        assert parsed_query.element_type_theories() == [DType.F32]
 
     def test_theory_functions_are_core_bindings(self):
         """The query namespace re-exports the same functions as the core module."""
-        assert query.hidden_node_theory is _core.hidden_node_theory
-        assert query.input_output_theory is _core.input_output_theory
-        assert query.multiple_networks_theory is _core.multiple_networks_theory
-        assert query.multiple_node_comparisons_theory is _core.multiple_node_comparisons_theory
-        assert query.arithmetic_complexity_theory is _core.arithmetic_complexity_theory
-        assert query.element_type_theories is _core.element_type_theories
+        assert callable(getattr(query.Query, "hidden_node_theory"))
+        assert callable(getattr(query.Query, "input_output_theory"))
+        assert callable(getattr(query.Query, "multiple_networks_theory"))
+        assert callable(getattr(query.Query, "multiple_node_comparisons_theory"))
+        assert callable(getattr(query.Query, "arithmetic_complexity_theory"))
+        assert callable(getattr(query.Query, "element_type_theories"))
 
     def test_theory_functions_from_file(self, tmp_path):
         """A query parsed from a file supports both theory classification functions."""
@@ -265,12 +273,12 @@ class TestQueryTheories:
 
         parsed_query = query.parse_query_file(str(query_path))
 
-        assert query.hidden_node_theory(parsed_query) == "H"
-        assert query.input_output_theory(parsed_query) == "MIO"
-        assert query.multiple_networks_theory(parsed_query) == "SNET"
-        assert query.multiple_node_comparisons_theory(parsed_query) == "SNC"
-        assert query.arithmetic_complexity_theory(parsed_query) == "BND"
-        assert query.element_type_theories(parsed_query) == ["Real"]
+        assert parsed_query.hidden_node_theory() == [HN.H]
+        assert parsed_query.input_output_theory() == [IO.MIO]
+        assert parsed_query.multiple_networks_theory() == [MN.SNET, MN.MNET]
+        assert parsed_query.multiple_node_comparisons_theory() == [NC.SNC, NC.MNC]
+        assert parsed_query.arithmetic_complexity_theory() == [AC.BND, AC.OUTC, AC.LIN, AC.POLY]
+        assert parsed_query.element_type_theories() == [DType.Real]
 
 
 class TestArithmeticComplexityTheory:
@@ -286,31 +294,31 @@ class TestArithmeticComplexityTheory:
 
     def classify(self, assertions):
         parsed_query = query.parse_query_string(self.NETWORK + assertions)
-        return query.arithmetic_complexity_theory(parsed_query)
+        return parsed_query.arithmetic_complexity_theory()
 
     def test_bounds_only(self):
         """Single variables against constants is BND."""
-        assert self.classify("(assert (<= X[0] 1.0)) (assert (>= Y[0] 0.5))") == "BND"
+        assert self.classify("(assert (<= X[0] 1.0)) (assert (>= Y[0] 0.5))") == [AC.BND, AC.OUTC, AC.LIN, AC.POLY]
 
     def test_output_comparison(self):
         """Two output variables compared directly is OUTC."""
-        assert self.classify("(assert (<= X[0] 1.0)) (assert (>= Y[0] Y[1]))") == "OUTC"
+        assert self.classify("(assert (<= X[0] 1.0)) (assert (>= Y[0] Y[1]))") == [AC.OUTC, AC.LIN, AC.POLY]
 
     def test_linear_expression(self):
         """A linear expression over inputs is LIN."""
         assert self.classify(
             "(assert (<= (+ (* 0.5 X[0]) (* 0.75 X[1])) 1.0)) (assert (>= (+ Y[0] Y[1]) 0.5))"
-        ) == "LIN"
+        ) == [AC.LIN, AC.POLY]
 
     def test_polynomial_expression(self):
         """A product of two variables is POLY."""
         assert self.classify(
             "(assert (<= (* X[0] X[1]) 1.0)) (assert (>= (+ Y[0] Y[1]) 0.5))"
-        ) == "POLY"
+        ) == [AC.POLY]
 
     def test_highest_level_wins(self):
         """One polynomial assertion makes the whole query POLY."""
-        assert self.classify("(assert (<= X[0] 1.0)) (assert (<= (* X[0] X[1]) 1.0))") == "POLY"
+        assert self.classify("(assert (<= X[0] 1.0)) (assert (<= (* X[0] X[1]) 1.0))") == [AC.POLY]
 
 
 class TestElementTypeTheories:
@@ -326,7 +334,7 @@ class TestElementTypeTheories:
         (assert (<= X[0] 1.0))
         """
         parsed_query = query.parse_query_string(content)
-        assert query.element_type_theories(parsed_query) == ["Real"]
+        assert parsed_query.element_type_theories() == [DType.Real]
 
     def test_mixed_element_types(self):
         """A query can belong to more than one element type theory."""
@@ -339,4 +347,4 @@ class TestElementTypeTheories:
         (assert (<= X[0] 1.0))
         """
         parsed_query = query.parse_query_string(content)
-        assert query.element_type_theories(parsed_query) == ["F16", "F32"]
+        assert parsed_query.element_type_theories() == [DType.F16, DType.F32]

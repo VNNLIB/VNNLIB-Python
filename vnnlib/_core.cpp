@@ -17,6 +17,13 @@
 
 namespace py = pybind11;
 
+// Theory enums (no global aliases exist for these)
+using vnnlib::query::THiddenNode;
+using vnnlib::query::TInputOutput;
+using vnnlib::query::TMultipleNetworks;
+using vnnlib::query::TMultipleNodeComparisons;
+using vnnlib::query::TArithmeticComplexity;
+
 PYBIND11_MODULE(_core, m) {
 	m.doc() = "Python bindings for VNNLib parsing and AST traversal";
 
@@ -38,12 +45,26 @@ PYBIND11_MODULE(_core, m) {
 		.value("PositiveIntConstant", TDataType::PositiveIntConstant)
 		.value("FloatConstant", TDataType::FloatConstant);
 
+	// --- Query theory sets (VNN-LIB 2.0, section 4.1). Registered under their C++ names because the solver
+	// bindings already use HiddenNodeTheory and ArithmeticComplexityTheory; vnnlib.query exports the friendly names. ---
+	py::enum_<THiddenNode>(m, "THiddenNode")
+		.value("NH", THiddenNode::NH).value("H", THiddenNode::H);
+	py::enum_<TInputOutput>(m, "TInputOutput")
+		.value("SIO", TInputOutput::SIO).value("MIO", TInputOutput::MIO);
+	py::enum_<TMultipleNetworks>(m, "TMultipleNetworks")
+		.value("SNET", TMultipleNetworks::SNET).value("MENET", TMultipleNetworks::MENET)
+		.value("MINET", TMultipleNetworks::MINET).value("MNET", TMultipleNetworks::MNET);
+	py::enum_<TMultipleNodeComparisons>(m, "TMultipleNodeComparisons")
+		.value("SNC", TMultipleNodeComparisons::SNC).value("MNC", TMultipleNodeComparisons::MNC);
+	py::enum_<TArithmeticComplexity>(m, "TArithmeticComplexity")
+		.value("BND", TArithmeticComplexity::BND).value("OUTC", TArithmeticComplexity::OUTC)
+		.value("LIN", TArithmeticComplexity::LIN).value("POLY", TArithmeticComplexity::POLY);
+
 	py::enum_<SymbolKind>(m, "SymbolKind")
 		.value("Input", SymbolKind::Input)
 		.value("Hidden", SymbolKind::Hidden)
 		.value("Output", SymbolKind::Output)
 		.value("Unknown", SymbolKind::Unknown);
-
 
 	py::enum_<vnnlib::solver::VerificationResult>(m, "VerificationResult")
 		.value("Sat", vnnlib::solver::VerificationResult::Sat)
@@ -314,7 +335,14 @@ PYBIND11_MODULE(_core, m) {
 		for (size_t i = 0; i < q.assertions.size(); ++i)
 			assertion_tuple[i] = py::cast(q.assertions[i].get(), py::return_value_policy::reference_internal, py::cast(&q));
 		return assertion_tuple;
-	});
+	})
+	// Theory classification, computed from the query each call. Each returns every theory the query belongs to, most precise first.
+	.def("hidden_node_theory", &TQuery::hiddenNodeTheory)
+	.def("input_output_theory", &TQuery::inputOutputTheory)
+	.def("multiple_networks_theory", &TQuery::multipleNetworksTheory)
+	.def("multiple_node_comparisons_theory", &TQuery::multipleNodeComparisonsTheory)
+	.def("arithmetic_complexity_theory", &TQuery::arithmeticComplexityTheory)
+	.def("element_type_theories", &TQuery::elementTypeTheories);
 
 	// --- CompatTransformer ---
 	py::class_<Polytope>(m, "Polytope")
@@ -338,30 +366,6 @@ PYBIND11_MODULE(_core, m) {
 	},
 	py::return_value_policy::move,
 	py::arg("content"));
-
-	m.def("hidden_node_theory", [](const TQuery& query) {
-		return hiddenNodeTheory(query);
-	}, py::arg("query"), "Compute the least permissive hidden-node theory on demand: NH or H.");
-
-	m.def("input_output_theory", [](const TQuery& query) {
-		return inputOutputTheory(query);
-	}, py::arg("query"), "Compute the least permissive input/output theory on demand: SIO or MIO.");
-
-	m.def("multiple_networks_theory", [](const TQuery& query) {
-		return multipleNetworksTheory(query);
-	}, py::arg("query"), "Compute the network theory a query belongs to: SNET, MNET, MINET, or MENET.");
-
-	m.def("multiple_node_comparisons_theory", [](const TQuery& query) {
-		return multipleNodeComparisonsTheory(query);
-	}, py::arg("query"), "Compute the node comparisons theory a query belongs to: SNC or MNC.");
-
-	m.def("arithmetic_complexity_theory", [](const TQuery& query) {
-		return arithmeticComplexityTheory(query);
-	}, py::arg("query"), "Compute the arithmetic complexity theory of a query: BND, OUTC, LIN, or POLY.");
-
-	m.def("element_type_theories", [](const TQuery& query) {
-		return elementTypeTheories(query);
-	}, py::arg("query"), "List the element type theories a query belongs to, one entry per declared element type.");
 
 	m.def("transform_to_compat", [](const TQuery& query) {
 		CompatTransformer transformer(&query);
