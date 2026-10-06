@@ -4,6 +4,11 @@ from .._core import (
     # Parsing
     parse_query_file,
     parse_query_string,
+    THiddenNode as HiddenNodeTheory,
+    TInputOutput as InputOutputTheory,
+    TMultipleNetworks as MultipleNetworksTheory,
+    TMultipleNodeComparisons as MultipleNodeComparisonsTheory,
+    TArithmeticComplexity as ArithmeticComplexityTheory,
 
     # Core AST nodes
     Query,
@@ -53,6 +58,11 @@ from .._core import (
 __all__ = [
     "parse_query_file",
     "parse_query_string",
+    "HiddenNodeTheory",
+    "InputOutputTheory",
+    "MultipleNetworksTheory",
+    "MultipleNodeComparisonsTheory",
+    "ArithmeticComplexityTheory",
 
     "Query",
     "Network",

@@ -17,6 +17,13 @@
 
 namespace py = pybind11;
 
+// Theory enums (no global aliases exist for these)
+using vnnlib::query::THiddenNode;
+using vnnlib::query::TInputOutput;
+using vnnlib::query::TMultipleNetworks;
+using vnnlib::query::TMultipleNodeComparisons;
+using vnnlib::query::TArithmeticComplexity;
+
 PYBIND11_MODULE(_core, m) {
 	m.doc() = "Python bindings for VNNLib parsing and AST traversal";
 
@@ -38,12 +45,26 @@ PYBIND11_MODULE(_core, m) {
 		.value("PositiveIntConstant", TDataType::PositiveIntConstant)
 		.value("FloatConstant", TDataType::FloatConstant);
 
+	// --- Query theory sets (VNN-LIB 2.0, section 4.1). Registered under their C++ names because the solver
+	// bindings already use HiddenNodeTheory and ArithmeticComplexityTheory; vnnlib.query exports the friendly names. ---
+	py::enum_<THiddenNode>(m, "THiddenNode")
+		.value("NH", THiddenNode::NH).value("H", THiddenNode::H);
+	py::enum_<TInputOutput>(m, "TInputOutput")
+		.value("SIO", TInputOutput::SIO).value("MIO", TInputOutput::MIO);
+	py::enum_<TMultipleNetworks>(m, "TMultipleNetworks")
+		.value("SNET", TMultipleNetworks::SNET).value("MENET", TMultipleNetworks::MENET)
+		.value("MINET", TMultipleNetworks::MINET).value("MNET", TMultipleNetworks::MNET);
+	py::enum_<TMultipleNodeComparisons>(m, "TMultipleNodeComparisons")
+		.value("SNC", TMultipleNodeComparisons::SNC).value("MNC", TMultipleNodeComparisons::MNC);
+	py::enum_<TArithmeticComplexity>(m, "TArithmeticComplexity")
+		.value("BND", TArithmeticComplexity::BND).value("OUTC", TArithmeticComplexity::OUTC)
+		.value("LIN", TArithmeticComplexity::LIN).value("POLY", TArithmeticComplexity::POLY);
+
 	py::enum_<SymbolKind>(m, "SymbolKind")
 		.value("Input", SymbolKind::Input)
 		.value("Hidden", SymbolKind::Hidden)
 		.value("Output", SymbolKind::Output)
 		.value("Unknown", SymbolKind::Unknown);
-
 
 	py::enum_<vnnlib::solver::VerificationResult>(m, "VerificationResult")
 		.value("Sat", vnnlib::solver::VerificationResult::Sat)
@@ -314,7 +335,14 @@ PYBIND11_MODULE(_core, m) {
 		for (size_t i = 0; i < q.assertions.size(); ++i)
 			assertion_tuple[i] = py::cast(q.assertions[i].get(), py::return_value_policy::reference_internal, py::cast(&q));
 		return assertion_tuple;
-	});
+	})
+	// Theory classification, computed from the query each call. Each returns every theory the query belongs to, most precise first.
+	.def("hidden_node_theory", &TQuery::hiddenNodeTheory)
+	.def("input_output_theory", &TQuery::inputOutputTheory)
+	.def("multiple_networks_theory", &TQuery::multipleNetworksTheory)
+	.def("multiple_node_comparisons_theory", &TQuery::multipleNodeComparisonsTheory)
+	.def("arithmetic_complexity_theory", &TQuery::arithmeticComplexityTheory)
+	.def("element_type_theories", &TQuery::elementTypeTheories);
 
 	// --- CompatTransformer ---
 	py::class_<Polytope>(m, "Polytope")
