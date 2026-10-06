@@ -1,10 +1,7 @@
 """Tests for the public ``vnnlib.query`` namespace."""
 
-import contextlib
-import io
 import os
 from pathlib import Path
-import re
 import subprocess
 import sys
 import warnings
@@ -347,50 +344,34 @@ class TestRootCompatibility:
 
 class TestNamespaceConsistency:
 
-    def test_readme_example_matches_query_namespace(self, tmp_path, monkeypatch):
-        """The unchanged README example and its new-path equivalent agree."""
-        readme = Path(__file__).resolve().parents[1] / "README.md"
-        examples = re.findall(r"```python\s*\n(.*?)```", readme.read_text(encoding="utf-8"), re.DOTALL)
-        assert len(examples) == 1, "Expected the README Basic Usage example"
-        legacy_example = examples[0]
-        new_example = legacy_example.replace("import vnnlib", "import vnnlib.query").replace(
-            "vnnlib.parse_query_file", "vnnlib.query.parse_query_file"
+    def test_syntax_file_matches_query_namespace(self):
+        """Legacy and query namespace paths parse the same syntax test file."""
+        path = (
+            Path(__file__).resolve().parents[1]
+            / "cpp/grammar/syntax/test/single_network.vnnlib"
         )
-        content = """
-        (vnnlib-version <2.0>)
-        (declare-network test
-            (declare-input X real [1])
-            (declare-output Y real [1])
-        )
-        (assert (<= X[0] 10.0))
-        """
-        path = tmp_path / "path/to/spec.vnnlib"
-        path.parent.mkdir(parents=True)
-        path.write_text(content, encoding="utf-8")
-        monkeypatch.chdir(tmp_path)
 
-        legacy_scope = {}
-        legacy_output = io.StringIO()
         with warnings.catch_warnings(record=True) as legacy_warnings:
             warnings.simplefilter("always")
-            with contextlib.redirect_stdout(legacy_output):
-                exec(legacy_example, legacy_scope)
+            legacy_query = vnnlib.parse_query_file(str(path))
 
-        new_scope = {}
-        new_output = io.StringIO()
         with warnings.catch_warnings(record=True) as new_warnings:
             warnings.simplefilter("always")
-            with contextlib.redirect_stdout(new_output):
-                exec(new_example, new_scope)
+            new_query = query.parse_query_file(str(path))
 
-        assert isinstance(legacy_scope["query"], query.Query)
-        assert isinstance(new_scope["query"], query.Query)
-        assert str(legacy_scope["query"]) == str(new_scope["query"])
-        assert legacy_output.getvalue() == new_output.getvalue()
-        assert legacy_output.getvalue().strip(), "The example must print its assertion"
+        assert isinstance(legacy_query, query.Query)
+        assert isinstance(new_query, query.Query)
+        assert str(legacy_query) == str(new_query)
+        legacy_assertions = [str(assertion) for assertion in legacy_query.assertions]
+        new_assertions = [str(assertion) for assertion in new_query.assertions]
+        assert legacy_assertions
+        assert legacy_assertions == new_assertions
         assert len(legacy_warnings) == 1
         assert legacy_warnings[0].category is DeprecationWarning
-        assert "vnnlib.query.parse_query_file" in str(legacy_warnings[0].message)
+        assert str(legacy_warnings[0].message) == (
+            "vnnlib.parse_query_file is deprecated; "
+            "use vnnlib.query.parse_query_file instead"
+        )
         assert new_warnings == []
 
 
