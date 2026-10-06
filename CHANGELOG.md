@@ -1,6 +1,8 @@
-# Unreleased (up to 2026-09-07)
+# Unreleased (up to 2026-10-06)
 
 * Added `vnnlib.query` as the new public namespace for the Python Query API. Existing root-level Query API names remain available for backwards compatibility and emit `DeprecationWarning`.
+
+* Standardised the Query API to use `isomorphic-to` (and the corresponding variable names) instead of `isometric-to`, following the C++ library.
 
 # Version 1.1
 
