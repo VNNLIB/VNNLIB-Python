@@ -1,5 +1,9 @@
 """Tests for the public ``vnnlib.query`` namespace."""
 
+import os
+from pathlib import Path
+import subprocess
+import sys
 import warnings
 
 import pytest
@@ -59,6 +63,11 @@ ENUM_EXPORTS = (
 
 EXCEPTION_EXPORTS = (
     "VNNLibException",
+)
+
+PUBLIC_EXPORTS = (
+    PARSING_EXPORTS + QUERY_EXPORTS + ARITHMETIC_EXPORTS + BOOLEAN_EXPORTS
+    + LINEAR_ARITHMETIC_EXPORTS + ENUM_EXPORTS + EXCEPTION_EXPORTS
 )
 
 class TestParsingNamespace:
@@ -306,14 +315,102 @@ class TestRootCompatibility:
             assert vnnlib.DType is vnnlib.query.DType
 
     def test_legacy_root_path_warns_with_replacement(self):
-        """A deprecated root export directs users to the query namespace."""
-        with pytest.warns(
-            DeprecationWarning,
-            match=r"vnnlib\.Or is deprecated; use vnnlib\.query\.Or instead",
-        ):
-            assert vnnlib.Or is vnnlib.query.Or
+        """Every deprecated root export emits one warning naming its replacement."""
+        for name in PUBLIC_EXPORTS:
+            with warnings.catch_warnings(record=True) as caught:
+                warnings.simplefilter("always")
+                legacy = getattr(vnnlib, name)
+
+            assert legacy is getattr(query, name)
+            assert len(caught) == 1, f"vnnlib.{name} must emit exactly one warning"
+            assert caught[0].category is DeprecationWarning
+            assert str(caught[0].message) == (
+                f"vnnlib.{name} is deprecated; use vnnlib.query.{name} instead"
+            )
+
+    def test_query_paths_do_not_warn(self):
+        """Every new-path export resolves without warnings."""
+        with warnings.catch_warnings(record=True) as caught:
+            warnings.simplefilter("always")
+            for name in PUBLIC_EXPORTS:
+                assert getattr(vnnlib.query, name) is getattr(vnnlib._core, name)
+        assert caught == []
 
     def test_invalid_root_name_raises_attribute_error(self):
         """Names outside the legacy public API remain unavailable."""
         with pytest.raises(AttributeError):
             getattr(vnnlib, "NotAnExport")
+
+
+class TestNamespaceConsistency:
+
+    def test_syntax_file_matches_query_namespace(self):
+        """Legacy and query namespace paths parse the same syntax test file."""
+        path = (
+            Path(__file__).resolve().parents[1]
+            / "cpp/grammar/syntax/test/single_network.vnnlib"
+        )
+
+        with warnings.catch_warnings(record=True) as legacy_warnings:
+            warnings.simplefilter("always")
+            legacy_query = vnnlib.parse_query_file(str(path))
+
+        with warnings.catch_warnings(record=True) as new_warnings:
+            warnings.simplefilter("always")
+            new_query = query.parse_query_file(str(path))
+
+        assert isinstance(legacy_query, query.Query)
+        assert isinstance(new_query, query.Query)
+        assert str(legacy_query) == str(new_query)
+        legacy_assertions = [str(assertion) for assertion in legacy_query.assertions]
+        new_assertions = [str(assertion) for assertion in new_query.assertions]
+        assert legacy_assertions
+        assert legacy_assertions == new_assertions
+        assert len(legacy_warnings) == 1
+        assert legacy_warnings[0].category is DeprecationWarning
+        assert str(legacy_warnings[0].message) == (
+            "vnnlib.parse_query_file is deprecated; "
+            "use vnnlib.query.parse_query_file instead"
+        )
+        assert new_warnings == []
+
+
+class TestNamespaceTyping:
+
+    def test_query_namespace_preserves_public_types(self, tmp_path):
+        """Mypy recognises all exports and rejects an incorrect parser result type."""
+        package = Path(vnnlib.__file__).resolve().parent
+        assert (package / "py.typed").is_file()
+        assert (package / "__init__.pyi").is_file()
+        assert (package / "query/__init__.pyi").is_file()
+        assert len(PUBLIC_EXPORTS) == len(set(PUBLIC_EXPORTS)) == 34
+
+        lines = ["from typing import Callable, Type", "import vnnlib as old", "import vnnlib.query as new"]
+        for name in PUBLIC_EXPORTS:
+            if name in PARSING_EXPORTS:
+                lines.append(f"old_{name}: Callable[[str], new.Query] = old.{name}")
+                lines.append(f"new_{name}: Callable[[str], new.Query] = new.{name}")
+            else:
+                lines.append(f"new_{name}: Type[old.{name}] = new.{name}")
+                lines.append(f"old_{name}: Type[new.{name}] = old.{name}")
+        lines.extend([
+            "old_result: new.Query = old.parse_query_string('')",
+            "new_result: new.Query = new.parse_query_string('')",
+        ])
+        probe = tmp_path / "namespace_typing.py"
+        probe.write_text("\n".join(lines) + "\n", encoding="utf-8")
+        env = os.environ.copy()
+        env["MYPYPATH"] = str(package.parent)
+        command = [sys.executable, "-m", "mypy", "--strict", "--no-incremental",
+                   "--cache-dir", str(tmp_path / "mypy-cache"), str(probe)]
+        positive = subprocess.run(command, cwd=tmp_path, env=env, capture_output=True, text=True)
+        assert positive.returncode == 0, positive.stdout + positive.stderr
+
+        lines.extend([
+            "bad_old: int = old.parse_query_string('')",
+            "bad_new: int = new.parse_query_string('')",
+        ])
+        probe.write_text("\n".join(lines) + "\n", encoding="utf-8")
+        negative = subprocess.run(command, cwd=tmp_path, env=env, capture_output=True, text=True)
+        assert negative.returncode == 1, negative.stdout + negative.stderr
+        assert negative.stdout.count("Incompatible types in assignment") == 2, negative.stdout

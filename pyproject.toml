@@ -25,6 +25,7 @@ dependencies = [
 [project.optional-dependencies]
 test = [
     "pytest",
+    "mypy",
     "vnnlib-test-solver==2.0.1",
 ]
 
