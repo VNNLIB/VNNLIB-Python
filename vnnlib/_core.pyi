@@ -45,6 +45,32 @@ class SymbolKind(Enum):
     Output: SymbolKind
     Unknown: SymbolKind
 
+# --- Theory sets ---------------------------------------------------------------
+
+class THiddenNode(Enum):
+    NH: int
+    H: int
+
+class TInputOutput(Enum):
+    SIO: int
+    MIO: int
+
+class TMultipleNetworks(Enum):
+    SNET: int
+    MENET: int
+    MINET: int
+    MNET: int
+
+class TMultipleNodeComparisons(Enum):
+    SNC: int
+    MNC: int
+
+class TArithmeticComplexity(Enum):
+    BND: int
+    OUTC: int
+    LIN: int
+    POLY: int
+
 class VerificationResult(Enum):
     Sat: VerificationResult
     Unsat: VerificationResult
@@ -326,6 +352,12 @@ class Query(Node):
     def networks(self) -> Tuple[Network, ...]: ...
     @property
     def assertions(self) -> Tuple[Assertion, ...]: ...
+    def hidden_node_theory(self) -> THiddenNode: ...
+    def input_output_theory(self) -> TInputOutput: ...
+    def multiple_networks_theory(self) -> TMultipleNetworks: ...
+    def multiple_node_comparisons_theory(self) -> TMultipleNodeComparisons: ...
+    def arithmetic_complexity_theory(self) -> TArithmeticComplexity: ...
+    def element_type_theories(self) -> List[DType]: ...
 
 
 # --- Compatibility (Reachability Format) ------------------------------------
